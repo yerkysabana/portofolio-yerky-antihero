@@ -1686,9 +1686,12 @@ body.konami-chaos {
 /* TAMBAHAN: stacking scroll — mobile: frame tinggi TETAP menumpuk tanpa
    scroll bersarang. Frame dibuat sticky 100svh (overflow hidden) lalu isinya
    digerakkan JS dari posisi scroll halaman (lihat stackingScroll.ts), jadi
-   scroll terasa satu alur terus-menerus — tidak nyangkut di tiap frame. */
+   scroll terasa satu alur terus-menerus — tidak nyangkut di tiap frame.
+   CATATAN: section TERAKHIR (kontak, berisi form) tidak ikut — di sana
+   scroll normal supaya form bisa diisi penuh (keyboard HP perlu scroll input
+   ke dalam viewport) dan halaman berakhir rapi tanpa area kosong. */
 @media (max-width: 900px) {
-  .stack-frame--tall {
+  .stack-frame--tall:not(:last-child) {
     position: sticky;
     top: var(--stack-offset);
     z-index: 1;
@@ -1717,7 +1720,7 @@ body.konami-chaos {
 
   /* overlay gelap: sticky di puncak area frame supaya tidak ikut ter-scroll.
      Margin negatif membuatnya tidak menambah tinggi konten. */
-  .stack-frame--tall::before {
+  .stack-frame--tall:not(:last-child)::before {
     display: block;
     position: sticky;
     top: 0;
@@ -1735,15 +1738,8 @@ body.konami-chaos {
   }
 
   /* overlay gelap versi lama (absolute) dimatikan — sudah pakai ::before sticky */
-  .stack-frame--tall::after {
+  .stack-frame--tall:not(:last-child)::after {
     display: none;
-  }
-
-  /* TAMBAHAN: ruang ekstra di akhir halaman. Di mobile layout viewport
-     (window.innerHeight) bisa lebih tinggi dari 100svh; tanpa ruang ini,
-     bagian bawah frame terakhir tidak bisa di-scroll sampai habis. */
-  main {
-    padding-bottom: calc(100lvh - 100svh);
   }
 }
 
