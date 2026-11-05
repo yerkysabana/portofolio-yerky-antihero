@@ -1683,11 +1683,10 @@ body.konami-chaos {
   }
 }
 
-/* TAMBAHAN: stacking scroll — mobile: frame tinggi TETAP menumpuk.
-   Di HP hampir semua section lebih tinggi dari layar → kalau pakai mode
-   --tall (scroll normal), efek stacking mati total. Jadi di mobile frame
-   tinggi dibuat sticky 100svh dengan scroll di dalam frame (nested scroll):
-   isi tetap bisa dibaca semua, dan frame berikutnya tetap menumpuk di atasnya. */
+/* TAMBAHAN: stacking scroll — mobile: frame tinggi TETAP menumpuk tanpa
+   scroll bersarang. Frame dibuat sticky 100svh (overflow hidden) lalu isinya
+   digerakkan JS dari posisi scroll halaman (lihat stackingScroll.ts), jadi
+   scroll terasa satu alur terus-menerus — tidak nyangkut di tiap frame. */
 @media (max-width: 900px) {
   .stack-frame--tall {
     position: sticky;
@@ -1696,9 +1695,11 @@ body.konami-chaos {
     height: 100vh;
     height: 100svh;
     min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    /* scroll di dalam frame dimatikan — digerakkan dari scroll halaman */
+    overflow: hidden;
+    /* ruang ekstra setinggi isi yang meluber (di-set JS lewat --sf-extra)
+       supaya halaman punya jalan scroll sepanjang isi frame */
+    margin-bottom: var(--sf-extra, 0px);
     border-radius: var(--radius);
     background-color: var(--color-bg-dark);
     /* halftone jadi background frame supaya tidak ikut ter-scroll */
@@ -1714,7 +1715,8 @@ body.konami-chaos {
     will-change: transform;
   }
 
-  /* halftone versi pseudo-element dimatikan (sudah pindah jadi background) */
+  /* overlay gelap: sticky di puncak area frame supaya tidak ikut ter-scroll.
+     Margin negatif membuatnya tidak menambah tinggi konten. */
   .stack-frame--tall::before {
     display: block;
     position: sticky;
@@ -1723,7 +1725,6 @@ body.konami-chaos {
     right: 0;
     height: 100vh;
     height: 100svh;
-    /* margin negatif supaya overlay tidak menambah tinggi konten */
     margin-bottom: -100svh;
     inset: auto;
     z-index: 2;
@@ -1736,6 +1737,13 @@ body.konami-chaos {
   /* overlay gelap versi lama (absolute) dimatikan — sudah pakai ::before sticky */
   .stack-frame--tall::after {
     display: none;
+  }
+
+  /* TAMBAHAN: ruang ekstra di akhir halaman. Di mobile layout viewport
+     (window.innerHeight) bisa lebih tinggi dari 100svh; tanpa ruang ini,
+     bagian bawah frame terakhir tidak bisa di-scroll sampai habis. */
+  main {
+    padding-bottom: calc(100lvh - 100svh);
   }
 }
 

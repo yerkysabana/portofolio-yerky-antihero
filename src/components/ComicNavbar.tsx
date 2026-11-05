@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { navSections, profileData } from '../data/portfolioData';
 import { useSoundEnabled } from '../hooks/useSoundEnabled';
 import { playScoreSound, setSoundEnabled } from '../hooks/useSoundFx';
+import { getStackFrameHeight } from '../lib/stackingScroll';
 
 interface ComicNavbarProps {
   cursorOn: boolean;
@@ -22,13 +23,13 @@ export function ComicNavbar({ cursorOn, onToggleCursor, onLogoClick }: ComicNavb
       ticking = false;
       let current = navSections[0]?.id ?? 'hero';
       // TAMBAHAN: pakai kriteria yang sama dengan indikator frame — section
-      // terakhir yang sudah menutup setengah viewport itulah yang "sedang
+      // terakhir yang sudah menutup setengah tinggi frame itulah yang "sedang
       // dilihat". offsetTop tidak dipakai karena section sticky yang sedang
       // stuck posisinya ikut bergeser mengikuti scroll.
-      const halfViewport = window.innerHeight * 0.5;
+      const halfFrame = getStackFrameHeight() * 0.5;
       navSections.forEach(({ id }) => {
         const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top < halfViewport) current = id;
+        if (el && el.getBoundingClientRect().top < halfFrame) current = id;
       });
       setActiveId(current);
     };
