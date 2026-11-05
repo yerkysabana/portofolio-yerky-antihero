@@ -21,12 +21,14 @@ export function ComicNavbar({ cursorOn, onToggleCursor, onLogoClick }: ComicNavb
     const update = () => {
       ticking = false;
       let current = navSections[0]?.id ?? 'hero';
+      // TAMBAHAN: pakai kriteria yang sama dengan indikator frame — section
+      // terakhir yang sudah menutup setengah viewport itulah yang "sedang
+      // dilihat". offsetTop tidak dipakai karena section sticky yang sedang
+      // stuck posisinya ikut bergeser mengikuti scroll.
+      const halfViewport = window.innerHeight * 0.5;
       navSections.forEach(({ id }) => {
         const el = document.getElementById(id);
-        // Catatan: offsetTop section sticky yang sedang "stuck" ≈ posisi scroll,
-        // jadi kondisi di bawah tetap benar — section terakhir yang sudah
-        // dilewati itulah yang menang.
-        if (el && window.scrollY >= el.offsetTop - 120) current = id;
+        if (el && el.getBoundingClientRect().top < halfViewport) current = id;
       });
       setActiveId(current);
     };

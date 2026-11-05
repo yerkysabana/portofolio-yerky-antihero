@@ -1683,6 +1683,62 @@ body.konami-chaos {
   }
 }
 
+/* TAMBAHAN: stacking scroll — mobile: frame tinggi TETAP menumpuk.
+   Di HP hampir semua section lebih tinggi dari layar → kalau pakai mode
+   --tall (scroll normal), efek stacking mati total. Jadi di mobile frame
+   tinggi dibuat sticky 100svh dengan scroll di dalam frame (nested scroll):
+   isi tetap bisa dibaca semua, dan frame berikutnya tetap menumpuk di atasnya. */
+@media (max-width: 900px) {
+  .stack-frame--tall {
+    position: sticky;
+    top: var(--stack-offset);
+    z-index: 1;
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius);
+    background-color: var(--color-bg-dark);
+    /* halftone jadi background frame supaya tidak ikut ter-scroll */
+    background-image: radial-gradient(rgba(200, 16, 46, 0.08) 1.5px, transparent 1.5px);
+    background-size: 16px 16px;
+    box-shadow: 0 -10px 0 rgba(0, 0, 0, 0.9), 0 -32px 70px rgba(0, 0, 0, 0.55);
+
+    /* transform yang sama dengan frame biasa supaya ikut mengecil/miring */
+    transform:
+      translateY(calc(var(--stack-offset) * var(--stack-progress)))
+      scale(calc(1 - var(--scale-step) * var(--stack-progress)))
+      rotate(calc(var(--rotate-in) * (1 - var(--enter)) - var(--rotate-out) * var(--stack-progress)));
+    will-change: transform;
+  }
+
+  /* halftone versi pseudo-element dimatikan (sudah pindah jadi background) */
+  .stack-frame--tall::before {
+    display: block;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    height: 100svh;
+    /* margin negatif supaya overlay tidak menambah tinggi konten */
+    margin-bottom: -100svh;
+    inset: auto;
+    z-index: 2;
+    background: #000;
+    background-image: none;
+    opacity: calc(var(--stack-dark) * var(--stack-progress));
+    pointer-events: none;
+  }
+
+  /* overlay gelap versi lama (absolute) dimatikan — sudah pakai ::before sticky */
+  .stack-frame--tall::after {
+    display: none;
+  }
+}
+
 /* TAMBAHAN: stacking scroll — mobile: rotasi & offset lebih kecil */
 @media (max-width: 900px) {
   :root {
@@ -1701,7 +1757,8 @@ body.konami-chaos {
     transform: none;
   }
 
-  .stack-frame::after {
+  .stack-frame::after,
+  .stack-frame--tall::before {
     display: none;
   }
 }

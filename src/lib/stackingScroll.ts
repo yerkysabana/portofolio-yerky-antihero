@@ -85,10 +85,28 @@ export function initStackingScroll(): void {
 
   // TAMBAHAN: stacking scroll — frame tinggi = scroll normal (tidak menumpuk)
   let resizeTimer: number | undefined;
+
+  // TAMBAHAN: stacking scroll — tinggi frame sebenarnya (100svh) diukur lewat probe.
+  // window.innerHeight di mobile = layout viewport yang bisa lebih besar dari
+  // 100svh (saat URL bar sembunyi), jadi tidak dipakai sebagai patokan.
+  const measureFrameHeight = (): number => {
+    const probe = document.createElement('div');
+    probe.style.position = 'fixed';
+    probe.style.top = '0';
+    probe.style.left = '0';
+    probe.style.height = '100svh';
+    probe.style.visibility = 'hidden';
+    probe.style.pointerEvents = 'none';
+    document.body.appendChild(probe);
+    const height = probe.getBoundingClientRect().height;
+    probe.remove();
+    return height;
+  };
+
   const measureFrames = () => {
-    const viewportHeight = window.innerHeight;
+    const frameHeight = measureFrameHeight();
     frames.forEach((frame) => {
-      frame.classList.toggle('stack-frame--tall', frame.scrollHeight > viewportHeight + 4);
+      frame.classList.toggle('stack-frame--tall', frame.scrollHeight > frameHeight + 4);
     });
   };
 
