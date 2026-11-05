@@ -257,3 +257,181 @@ export const navSections: { id: string; label: string }[] = [
   { id: 'arcade', label: 'MINI GAME' },
   { id: 'kontak', label: 'KONTAK' },
 ];
+
+// ========================================================
+// TAMBAHAN: detail proyek — data lengkap untuk halaman detail.
+// Satu template detail dipakai untuk semua proyek; cukup edit array ini.
+// Urutan array harus sama dengan projectsData di atas.
+// GANTI: teks narasi, angka statistik, URL gambar/galeri, dan link tiap proyek.
+// ========================================================
+export interface ProjectStat {
+  value: number;
+  suffix?: string;
+  label: string;
+}
+
+export interface GalleryItem {
+  image?: string; // GANTI: URL screenshot (kosong = placeholder komik)
+  caption: string;
+}
+
+export interface TechItem {
+  icon: string; // emoji ikon teknologi
+  name: string;
+}
+
+export interface ProjectDetailData {
+  id: string;
+  image?: string; // GANTI: URL gambar utama proyek (kosong = placeholder komik)
+  background: string; // GANTI: latar belakang / konteks proyek
+  problem: string; // GANTI: masalah yang diselesaikan
+  solution: string; // GANTI: solusi yang dibangun
+  result: string; // GANTI: hasil / dampak proyek
+  stats: ProjectStat[]; // GANTI: angka statistik (animasi count-up)
+  gallery: GalleryItem[]; // GANTI: daftar screenshot
+  techStack: TechItem[]; // GANTI: ikon + nama teknologi
+  links: { live?: string; repo?: string }; // GANTI: link demo & source code ('#' = belum diisi)
+}
+
+export const projectDetailsData: ProjectDetailData[] = [
+  {
+    id: 'fe-trafix',
+    // GANTI: taruh URL gambar utama Trafix di sini, contoh: '/projects/trafix.jpg'
+    image: '',
+    background:
+      'Trafix adalah platform enterprise untuk manajemen operasional dan monitoring perangkat. Arsitektur frontend-nya berbasis Turborepo yang mencakup 4 sub-aplikasi mandiri: Admin Teknisi, Finance, Operator, dan Signage.',
+    problem:
+      'Portal admin teknisi, keuangan, operator, dan tampilan signage awalnya berjalan terpisah. Tidak ada sumber tunggal untuk status perangkat, tiket keluhan, dan laporan keuangan — akibatnya switching context tinggi, gaya visual tidak konsisten, dan data operasional sulit dilacak real-time.',
+    solution:
+      'Frontend disusun ulang menjadi monorepo modular dengan Turborepo: setiap portal punya codebase sendiri tapi berbagi design system, utilitas, dan kontrak API yang sama. Dilengkapi dashboard analitik, audit transaksi finance, dan display digital signage terpisah untuk informasi publik.',
+    result:
+      'Empat sub-aplikasi terintegrasi dalam satu monorepo dengan REST API terpusat. Status perangkat dan tiket keluhan terpantau real-time, laporan finance terpadu dalam satu dashboard, dan signage publik berjalan independen tanpa mengganggu portal internal.',
+    // GANTI: sesuaikan angka statistik dengan data riil proyek
+    stats: [
+      { value: 4, label: 'Sub-aplikasi Terintegrasi' },
+      { value: 95, suffix: '%', label: 'Target Performa UI' },
+      { value: 100, suffix: '+', label: 'Komponen Reusable' },
+    ],
+    // GANTI: taruh URL screenshot tiap portal di sini
+    gallery: [
+      { image: '', caption: 'Portal Admin Teknisi — manajemen tiket perbaikan' },
+      { image: '', caption: 'Dashboard Finance — laporan & audit transaksi' },
+      { image: '', caption: 'Tampilan Signage — informasi publik real-time' },
+    ],
+    // GANTI: sesuaikan ikon & nama tech stack
+    techStack: [
+      { icon: '📦', name: 'Turborepo' },
+      { icon: '⚛️', name: 'React' },
+      { icon: '🔷', name: 'TypeScript' },
+      { icon: '🎨', name: 'Tailwind CSS' },
+      { icon: '🔌', name: 'REST API' },
+    ],
+    // GANTI: isi link demo & repository ('#' berarti belum diisi)
+    links: { live: '#', repo: '#' },
+  },
+  {
+    id: 'yukabsen',
+    // GANTI: taruh URL gambar utama YukAbsen di sini
+    image: '',
+    background:
+      'YukAbsen adalah ekosistem absensi digital karyawan: aplikasi mobile berbasis Expo (React Native) untuk presensi lapangan, plus dashboard web admin Next.js 16 untuk monitoring.',
+    problem:
+      'Absensi konvensional tidak bisa memverifikasi apakah karyawan benar-benar berada di lokasi kerja. Data kehadiran tersebar, jadwal shift sulit dikelola, dan admin tidak punya visualisasi pemetaan untuk memantau ribuan titik presensi.',
+    solution:
+      'Presensi divalidasi dengan radius GPS (geofencing) memakai React Native Maps dan TanStack Query, dilengkapi verifikasi foto selfie. Dashboard admin Next.js 16 dengan Leaflet menampilkan pemetaan interaktif, manajemen jadwal kerja, shift, dan riwayat absensi, serta visualisasi Recharts.',
+    result:
+      'Kehadiran hanya bisa dicatat di dalam radius lokasi yang ditentukan, data tersentralisasi di dashboard, dan admin mendapat gambaran real-time melalui peta interaktif serta grafik statistik kehadiran.',
+    // GANTI: sesuaikan angka statistik dengan data riil proyek
+    stats: [
+      { value: 2, label: 'Platform (Mobile + Web)' },
+      { value: 100, suffix: '%', label: 'Presensi Terverifikasi Lokasi' },
+      { value: 60, suffix: 'fps', label: 'Target Animasi UI' },
+    ],
+    // GANTI: taruh URL screenshot aplikasi di sini
+    gallery: [
+      { image: '', caption: 'Aplikasi Mobile — presensi geofencing + selfie' },
+      { image: '', caption: 'Dashboard Admin — peta Leaflet interaktif' },
+      { image: '', caption: 'Visualisasi Recharts — statistik kehadiran' },
+    ],
+    // GANTI: sesuaikan ikon & nama tech stack
+    techStack: [
+      { icon: '📱', name: 'React Native' },
+      { icon: '🚀', name: 'Expo' },
+      { icon: '▲', name: 'Next.js 16' },
+      { icon: '🗺️', name: 'Leaflet' },
+      { icon: '📊', name: 'Recharts' },
+    ],
+    // GANTI: isi link demo & repository ('#' berarti belum diisi)
+    links: { live: '#', repo: '#' },
+  },
+  {
+    id: 'mobile-parking',
+    // GANTI: taruh URL gambar utama MobileParking di sini
+    image: '',
+    background:
+      'MobileParking adalah sistem parkir cerdas: website monitoring ketersediaan area parkir berbasis Next.js 16, dipasangkan dengan aplikasi mobile Flutter untuk pengendara.',
+    problem:
+      'Pengendara sering mengitari area parkir tanpa tahu slot mana yang kosong, sementara operator kesulitan memantau kuota, durasi, dan transaksi parkir secara live dari satu tempat.',
+    solution:
+      'Website monitoring menampilkan status kuota dan ketersediaan lot parkir secara real-time dengan Tailwind CSS dan Recharts, terhubung ke REST API backend untuk pencatatan tiket dan durasi parkir. Aplikasi mobile Flutter menjadi pelengkap bagi pengendara di lapangan.',
+    result:
+      'Operator memantau seluruh area dari satu dashboard live, pengendara mendapat informasi ketersediaan slot sebelum masuk, dan data transaksi terekam otomatis untuk pelaporan harian.',
+    // GANTI: sesuaikan angka statistik dengan data riil proyek
+    stats: [
+      { value: 2, label: 'Aplikasi (Web + Mobile)' },
+      { value: 24, suffix: '/7', label: 'Monitoring Status Slot' },
+      { value: 100, suffix: '%', label: 'Tampilan Responsif' },
+    ],
+    // GANTI: taruh URL screenshot aplikasi di sini
+    gallery: [
+      { image: '', caption: 'Dashboard Monitoring — kuota & ketersediaan lot' },
+      { image: '', caption: 'Grafik Recharts — volume kendaraan harian' },
+      { image: '', caption: 'Aplikasi Mobile Flutter — panduan pengendara' },
+    ],
+    // GANTI: sesuaikan ikon & nama tech stack
+    techStack: [
+      { icon: '▲', name: 'Next.js 16' },
+      { icon: '⚛️', name: 'React 19' },
+      { icon: '🎨', name: 'Tailwind CSS' },
+      { icon: '📊', name: 'Recharts' },
+      { icon: '💙', name: 'Flutter' },
+    ],
+    // GANTI: isi link demo & repository ('#' berarti belum diisi)
+    links: { live: '#', repo: '#' },
+  },
+  {
+    id: 'academic-projects',
+    // GANTI: taruh URL gambar utama proyek akademik di sini
+    image: '',
+    background:
+      'Proyek akademik gabungan: sistem reservasi tiket konser berbasis PHP/MySQL dan riset terapan computer vision untuk deteksi warna objek real-time menggunakan Python OpenCV.',
+    problem:
+      'Penjualan tiket konser manual rawan overselling dan antri panjang, sementara deteksi warna berbasis kamera membutuhkan filter ruang warna yang tepat agar akurat di berbagai kondisi pencahayaan.',
+    solution:
+      'Sistem pemesanan tiket dibangun lengkap dengan otentikasi akun, manajemen kuota tiket, dan operasi CRUD PHP/MySQL. Riset computer vision memakai filter ruang warna HSV pada frame video webcam untuk mendeteksi objek warna secara real-time.',
+    result:
+      'Alur pemesanan tiket konser berjalan interaktif dengan kuota terkendali, dan deteksi warna berbasis HSV terbukti bekerja real-time pada umpan kamera.',
+    // GANTI: sesuaikan angka statistik dengan data riil proyek
+    stats: [
+      { value: 2, label: 'Proyek (Web + Computer Vision)' },
+      { value: 30, suffix: 'fps', label: 'Deteksi Warna Real-time' },
+      { value: 180, suffix: '°', label: 'Rentang Hue HSV' },
+    ],
+    // GANTI: taruh URL screenshot proyek di sini
+    gallery: [
+      { image: '', caption: 'Sistem Pemesanan Tiket — katalog & kuota' },
+      { image: '', caption: 'Deteksi Warna HSV — tampilan kamera' },
+      { image: '', caption: 'Basis Data MySQL — struktur relasional' },
+    ],
+    // GANTI: sesuaikan ikon & nama tech stack
+    techStack: [
+      { icon: '🐘', name: 'PHP' },
+      { icon: '🗄️', name: 'MySQL' },
+      { icon: '🐍', name: 'Python' },
+      { icon: '👁️', name: 'OpenCV' },
+      { icon: '📜', name: 'JavaScript' },
+    ],
+    // GANTI: isi link demo & repository ('#' berarti belum diisi)
+    links: { live: '#', repo: '#' },
+  },
+];

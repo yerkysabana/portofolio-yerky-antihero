@@ -48,6 +48,7 @@ export function ComicCursor({ active }: { active: boolean }) {
         target?.closest('input') ||
         target?.closest('textarea') ||
         target?.closest('.arcade-viewport') ||
+        target?.closest('.project-detail') || // TAMBAHAN: detail proyek — jangan ganggu panel detail
         target?.closest('a')
       ) {
         return;

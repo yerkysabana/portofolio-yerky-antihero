@@ -1765,3 +1765,790 @@ body.konami-chaos {
     padding: 1px 6px;
   }
 }
+
+/* ========================================================
+   TAMBAHAN: detail proyek — halaman detail fullscreen (FLIP)
+   Cara pakai: append ke src/index.css. Struktur & animasi
+   dirakit oleh src/lib/projectDetail.ts dari data
+   projectDetailsData di src/data/portfolioData.ts.
+   ======================================================== */
+
+/* latar belakang meredup + halaman utama mengecil sedikit saat detail terbuka */
+body.detail-open {
+  overflow: hidden;
+}
+
+body.detail-open main {
+  transform: scale(0.955);
+  opacity: 0.5;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+}
+
+body.detail-open .stack-indicator {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.project-detail {
+  position: fixed;
+  inset: 0;
+  z-index: 1600;
+  display: none;
+}
+
+.project-detail.is-mounted {
+  display: block;
+}
+
+/* TAMBAHAN: detail proyek — backdrop gelap di belakang panel */
+.pd-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  z-index: 1500;
+}
+
+.project-detail.is-open .pd-backdrop {
+  opacity: 1;
+}
+
+/* TAMBAHAN: detail proyek — panel detail (target animasi FLIP) */
+.pd-panel {
+  position: fixed;
+  inset: 16px;
+  background: var(--color-bg-dark);
+  border: 4px solid #000;
+  border-radius: var(--radius);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  z-index: 1600;
+  transform-origin: top left;
+  will-change: transform;
+  outline: none;
+}
+
+/* TAMBAHAN: detail proyek — bar progres baca tipis di atas panel */
+.pd-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  z-index: 8;
+}
+
+.pd-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-yellow));
+}
+
+/* TAMBAHAN: detail proyek — tombol kembali (sticky di atas panel) */
+.pd-close {
+  position: sticky;
+  top: 12px;
+  margin: 12px 0 0 12px;
+  z-index: 6;
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  background: var(--color-yellow);
+  color: #000;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: 2px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pd-close:hover {
+  transform: translateY(-2px) rotate(-2deg);
+}
+
+/* TAMBAHAN: detail proyek — area scroll isi panel */
+.pd-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: -56px; /* tarik naik agar tombol kembali mengapung di atas hero */
+  opacity: 0;
+  transition: opacity 0.35s ease 0.28s;
+  scrollbar-width: thin;
+  scrollbar-color: #333 #0d0d0d;
+}
+
+.project-detail.is-open .pd-scroll {
+  opacity: 1;
+}
+
+.project-detail.is-closing .pd-scroll {
+  transition: opacity 0.12s ease;
+}
+
+/* TAMBAHAN: detail proyek — hero detail (gambar zoom-out + parallax) */
+.pd-hero {
+  position: relative;
+  height: 46vh;
+  min-height: 320px;
+  overflow: hidden;
+  border-bottom: 4px solid #000;
+}
+
+.pd-hero-media {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.1);
+}
+
+.project-detail.is-open .pd-hero-media {
+  animation: pd-hero-zoom 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes pd-hero-zoom {
+  to { transform: scale(1); }
+}
+
+.pd-hero-media-inner {
+  position: absolute;
+  inset: -12% 0;
+  will-change: transform;
+}
+
+.pd-hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pd-hero-placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(rgba(200, 16, 46, 0.28) 1.5px, transparent 1.5px) 0 0 / 16px 16px,
+    linear-gradient(135deg, #24060a, #0d0d0d 65%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pd-hero-placeholder-text {
+  font-family: var(--font-comic);
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  letter-spacing: 2px;
+  color: var(--color-yellow);
+  text-shadow: 4px 4px 0 #000, -2px -2px 0 var(--color-primary);
+  text-align: center;
+  padding: 0 20px;
+}
+
+.pd-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13, 13, 13, 0.96) 8%, rgba(13, 13, 13, 0.25) 55%, transparent);
+}
+
+.pd-hero-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 28px;
+  z-index: 2;
+}
+
+.pd-hero-badge {
+  background: var(--color-yellow);
+  color: #000;
+  border: 3px solid #000;
+  font-family: var(--font-comic);
+  font-size: 1.05rem;
+  padding: 3px 12px;
+  display: inline-block;
+  box-shadow: 3px 3px 0 #000;
+  transform: rotate(-3deg);
+  margin-bottom: 12px;
+}
+
+/* TAMBAHAN: detail proyek — judul muncul huruf per huruf + glitch */
+.pd-title {
+  font-family: var(--font-comic);
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  letter-spacing: 2px;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 4px 4px 0 #000, -2px -2px 0 var(--color-primary);
+  text-transform: uppercase;
+}
+
+.project-detail.is-open .pd-title {
+  animation: pd-glitch 2.6s steps(2) 0.7s 3;
+}
+
+@keyframes pd-glitch {
+  0%, 100% { text-shadow: 4px 4px 0 #000, -2px -2px 0 var(--color-primary); }
+  50% { text-shadow: -5px 3px 0 var(--color-primary), 4px -3px 0 var(--color-yellow); }
+}
+
+.pd-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(46px) rotate(-8deg);
+}
+
+.project-detail.is-open .pd-letter {
+  animation: pd-letter-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    calc(0.35s + var(--i) * 0.045s) forwards;
+}
+
+@keyframes pd-letter-in {
+  to { opacity: 1; transform: none; }
+}
+
+.pd-hero-sub {
+  margin-top: 10px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* TAMBAHAN: detail proyek — badan konten */
+.pd-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 44px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 38px;
+}
+
+/* TAMBAHAN: detail proyek — blok konten masuk bergantian (stagger) */
+.pd-block {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i, 0) * 0.09s);
+}
+
+.pd-block.pd-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.pd-block-title {
+  font-family: var(--font-comic);
+  font-size: 2rem;
+  letter-spacing: 1px;
+  color: var(--color-yellow);
+  text-shadow: 3px 3px 0 #000;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pd-block p {
+  color: #ddd;
+  font-size: 1.02rem;
+}
+
+/* TAMBAHAN: detail proyek — stempel dekoratif di blok hasil */
+.pd-result {
+  position: relative;
+}
+
+.pd-stamp {
+  position: absolute;
+  top: -20px;
+  right: 4px;
+  border: 4px dashed var(--color-primary);
+  color: var(--color-primary);
+  font-family: var(--font-comic);
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  transform: rotate(12deg);
+  background: rgba(0, 0, 0, 0.65);
+  box-shadow: 3px 3px 0 #000;
+  pointer-events: none;
+}
+
+.pd-result.pd-visible .pd-stamp {
+  animation: pd-stamp-shake 0.65s cubic-bezier(0.36, 0.07, 0.19, 0.97) 0.25s;
+}
+
+@keyframes pd-stamp-shake {
+  0%, 100% { transform: rotate(12deg); }
+  20% { transform: rotate(12deg) translate(-7px, 2px) scale(1.14); }
+  40% { transform: rotate(12deg) translate(6px, -3px) scale(1.09); }
+  60% { transform: rotate(12deg) translate(-4px, 1px) scale(1.05); }
+  80% { transform: rotate(12deg) translate(3px, -1px); }
+}
+
+/* TAMBAHAN: detail proyek — kartu statistik count-up */
+.pd-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 20px;
+}
+
+.pd-stat {
+  background: var(--color-surface);
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  border-radius: 4px;
+  padding: 20px 16px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px) scale(0.92);
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition-delay: calc(var(--i, 0) * 0.11s);
+}
+
+.pd-stat.pd-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.pd-stat-value {
+  font-family: var(--font-comic);
+  font-size: 3rem;
+  line-height: 1.1;
+  color: var(--color-primary);
+  text-shadow: 3px 3px 0 #000;
+}
+
+.pd-stat-label {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* TAMBAHAN: detail proyek — galeri carousel (drag/swipe + tilt + lightbox) */
+.pd-gallery-viewport {
+  position: relative;
+  overflow: hidden;
+  border: 4px solid #000;
+  border-radius: 8px;
+  box-shadow: var(--comic-shadow);
+  background: #111;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.pd-gallery-viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.pd-track {
+  display: flex;
+  will-change: transform;
+}
+
+.pd-slide {
+  min-width: 100%;
+  aspect-ratio: 16 / 9;
+  position: relative;
+  perspective: 900px;
+}
+
+.pd-slide-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out;
+}
+
+.pd-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pd-slide-placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(rgba(200, 16, 46, 0.22) 1.5px, transparent 1.5px) 0 0 / 16px 16px,
+    linear-gradient(135deg, #1c0508, #101010 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.pd-slide-placeholder span {
+  font-family: var(--font-comic);
+  font-size: 1.4rem;
+  color: var(--color-yellow);
+  text-shadow: 3px 3px 0 #000;
+  text-align: center;
+}
+
+.pd-slide-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.78);
+  color: var(--color-yellow);
+  font-family: var(--font-comic);
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+}
+
+.pd-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.pd-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #000;
+  background: #333;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+  padding: 0;
+  transition: transform 0.15s, background-color 0.15s;
+}
+
+.pd-dot.is-active {
+  background: var(--color-yellow);
+  transform: scale(1.25);
+}
+
+/* TAMBAHAN: detail proyek — lightbox galeri */
+.pd-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1700;
+  background: rgba(0, 0, 0, 0.93);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.pd-lightbox.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.pd-lightbox-content {
+  max-width: min(1100px, 92vw);
+  transform: scale(0.85);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+.pd-lightbox.is-open .pd-lightbox-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.pd-lightbox-content img {
+  max-width: 100%;
+  max-height: 82vh;
+  display: block;
+  border: 4px solid #000;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+}
+
+.pd-lightbox-placeholder {
+  width: min(900px, 90vw);
+  aspect-ratio: 16 / 9;
+  border: 4px solid #000;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+  background:
+    radial-gradient(rgba(200, 16, 46, 0.22) 1.5px, transparent 1.5px) 0 0 / 16px 16px,
+    linear-gradient(135deg, #1c0508, #101010 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.pd-lightbox-placeholder span {
+  font-family: var(--font-comic);
+  font-size: 1.6rem;
+  color: var(--color-yellow);
+  text-shadow: 3px 3px 0 #000;
+  text-align: center;
+}
+
+.pd-lightbox-caption {
+  margin-top: 12px;
+  text-align: center;
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  color: var(--color-yellow);
+}
+
+.pd-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  background: var(--color-yellow);
+  color: #000;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+/* TAMBAHAN: detail proyek — tech stack memantul satu per satu */
+.pd-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.pd-stack-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #000;
+  border: 2px solid #444;
+  padding: 8px 14px;
+  border-radius: 4px;
+  color: var(--color-yellow);
+  font-weight: 600;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.pd-stack.pd-visible .pd-stack-item {
+  animation: pd-pop 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) calc(var(--i) * 0.09s) forwards;
+}
+
+@keyframes pd-pop {
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* TAMBAHAN: detail proyek — footer: proyek berikutnya + tombol aksi */
+.pd-footer {
+  border-top: 3px dashed #333;
+  padding-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.pd-next {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  background: var(--color-surface);
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  padding: 18px 22px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #fff;
+  text-align: left;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+}
+
+.pd-next:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 #000;
+}
+
+.pd-next-label {
+  font-family: var(--font-comic);
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.pd-next small {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0;
+}
+
+.pd-next-arrow {
+  font-size: 2rem;
+  color: var(--color-yellow);
+  animation: pd-arrow-bounce 1.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pd-arrow-bounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(10px); }
+}
+
+.pd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* TAMBAHAN: detail proyek — tombol aksi bounce + squash-stretch */
+.pd-btn {
+  font-family: var(--font-comic);
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  padding: 10px 22px;
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: #fff;
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.15s ease,
+    background-color 0.15s;
+}
+
+.pd-btn:hover {
+  animation: pd-btn-bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: #e01133;
+}
+
+.pd-btn:active {
+  animation: pd-btn-squash 0.25s ease;
+}
+
+.pd-btn--secondary {
+  background: var(--color-yellow);
+  color: #000;
+}
+
+.pd-btn--secondary:hover {
+  background: #ffe04d;
+}
+
+.pd-btn[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes pd-btn-bounce {
+  0%, 100% { transform: translate(0, 0); }
+  30% { transform: translate(-3px, -6px) rotate(-1deg); }
+  60% { transform: translate(2px, 2px); }
+}
+
+@keyframes pd-btn-squash {
+  0% { transform: scale(1, 1); }
+  50% { transform: scale(1.15, 0.85); }
+  100% { transform: scale(1, 1); }
+}
+
+/* TAMBAHAN: detail proyek — transisi panel lama keluar / panel baru masuk */
+.pd-panel.pd-leaving {
+  transition: transform 0.32s ease, opacity 0.32s ease;
+  transform: translateX(-8%) scale(0.98);
+  opacity: 0;
+}
+
+.pd-panel.pd-entering {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+  transform: translateX(8%);
+  opacity: 0;
+}
+
+/* TAMBAHAN: detail proyek — mobile: fullscreen, animasi lebih ringan */
+@media (max-width: 900px) {
+  .pd-panel {
+    inset: 0;
+    border-radius: 0;
+    border: none;
+  }
+
+  .pd-hero {
+    height: 38vh;
+    min-height: 240px;
+  }
+
+  .pd-body {
+    padding: 30px 16px 64px;
+    gap: 30px;
+  }
+
+  .pd-block {
+    transition-duration: 0.35s;
+  }
+
+  .pd-slide {
+    perspective: none;
+  }
+
+  .pd-stamp {
+    font-size: 1rem;
+    top: -14px;
+  }
+
+  .pd-next-label {
+    font-size: 1.2rem;
+  }
+
+  .pd-next-arrow {
+    font-size: 1.5rem;
+  }
+}
+
+/* TAMBAHAN: detail proyek — prefers-reduced-motion: ganti transisi dengan fade sederhana */
+@media (prefers-reduced-motion: reduce) {
+  .pd-scroll {
+    transition: opacity 0.2s ease 0s;
+  }
+
+  /* selector spesifik ikut dimatikan agar menang atas aturan animasi biasa */
+  .pd-block,
+  .pd-stat,
+  .pd-stack-item,
+  .pd-letter,
+  .pd-stamp,
+  .project-detail.is-open .pd-hero-media,
+  .project-detail.is-open .pd-title,
+  .project-detail.is-open .pd-letter,
+  .pd-stack.pd-visible .pd-stack-item,
+  .pd-result.pd-visible .pd-stamp {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.25s ease;
+    animation: none;
+  }
+
+  .pd-hero-media,
+  .pd-hero-media-inner,
+  .pd-title,
+  .pd-next-arrow,
+  .pd-btn:hover,
+  .pd-btn:active,
+  .pd-slide-inner {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+}

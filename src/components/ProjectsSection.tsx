@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { projectsData } from '../data/portfolioData';
+// TAMBAHAN: detail proyek — buka halaman detail dari kartu
+import { openProjectDetail } from '../lib/projectDetail';
 
-/** Proyek pilihan: kartu bergaya stempel komik dengan detail expandable. */
+/** Proyek pilihan: kartu bergaya stempel komik; tombol membuka halaman detail. */
 export function ProjectsSection() {
-  const [openId, setOpenId] = useState<string | null>(null);
-
   return (
     <section id="proyek">
       <div className="section-header">
@@ -15,10 +14,9 @@ export function ProjectsSection() {
       </div>
 
       <div className="projects-grid">
-        {projectsData.map((project) => {
-          const open = openId === project.id;
-          return (
-            <div className="project-card" key={project.id}>
+        {projectsData.map((project) => (
+          // TAMBAHAN: detail proyek — data-project-card dipakai animasi FLIP sebagai posisi asal
+          <div className="project-card" key={project.id} data-project-card={project.id}>
               <div className="project-thumb">
                 <div className="slot-placeholder" style={{ border: '2px dashed #555' }}>
                   <span style={{ fontFamily: 'var(--font-comic)', color: '#fff', fontSize: '1.3rem' }}>
@@ -41,36 +39,17 @@ export function ProjectsSection() {
                   </div>
                 </div>
 
-                {open && (
-                  <div className="project-details">
-                    <p style={{ color: '#bbb', fontSize: '0.9rem' }}>{project.description}</p>
-                    <div className="project-metrics">
-                      {project.metrics.map((m) => (
-                        <div className="project-metric-row" key={m.label}>
-                          <span className="m-label">{m.label}</span>
-                          <span className="m-value">{m.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <ul className="project-features">
-                      {project.features.map((f) => (
-                        <li key={f}>{f}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
+                {/* TAMBAHAN: detail proyek — buka halaman detail (FLIP dari kartu ini) */}
                 <button
                   className="comic-btn"
                   style={{ padding: '6px 16px', fontSize: '1.1rem', width: 'fit-content' }}
-                  onClick={() => setOpenId(open ? null : project.id)}
+                  onClick={(event) => openProjectDetail(project.id, event.currentTarget)}
                 >
-                  {open ? 'TUTUP DOKUMEN ➔' : 'PELAJARI KASUS ➔'}
+                  PELAJARI KASUS ➔
                 </button>
               </div>
-            </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </section>
   );
