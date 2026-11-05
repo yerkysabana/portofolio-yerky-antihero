@@ -16,16 +16,32 @@ export function ComicNavbar({ cursorOn, onToggleCursor, onLogoClick }: ComicNavb
   const soundOn = useSoundEnabled();
 
   useEffect(() => {
-    const onScroll = () => {
-      let current = 'hero';
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      let current = navSections[0]?.id ?? 'hero';
       navSections.forEach(({ id }) => {
         const el = document.getElementById(id);
+        // Catatan: offsetTop section sticky yang sedang "stuck" ≈ posisi scroll,
+        // jadi kondisi di bawah tetap benar — section terakhir yang sudah
+        // dilewati itulah yang menang.
         if (el && window.scrollY >= el.offsetTop - 120) current = id;
       });
       setActiveId(current);
     };
-    window.addEventListener('scroll', onScroll);
-    onScroll();
+
+    // TAMBAHAN: stacking scroll — throttle dengan rAF supaya scroll mulus
+    // (sebelumnya tiap event scroll membaca offsetTop → paksa reflow)
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 

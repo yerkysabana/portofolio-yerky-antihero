@@ -22,6 +22,33 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
+/**
+ * TAMBAHAN: stacking scroll — ukur posisi asli (dokumen) elemen.
+ *
+ * position: sticky dimatikan sementara karena offsetTop / getBoundingClientRect
+ * elemen yang sedang "stuck" bergeser mengikuti scroll — bukan posisi aslinya.
+ * Pengukuran dilakukan sinkron dalam satu task, jadi tidak terlihat oleh pengguna.
+ */
+export function measureElementTops(elements: (HTMLElement | null)[]): number[] {
+  const found = elements.filter((el): el is HTMLElement => el !== null);
+  const inlinePosition = found.map((el) => el.style.position);
+
+  found.forEach((el) => {
+    el.style.position = 'static';
+  });
+
+  const tops = new Map<HTMLElement, number>();
+  found.forEach((el) => {
+    tops.set(el, el.getBoundingClientRect().top + window.scrollY);
+  });
+
+  found.forEach((el, index) => {
+    el.style.position = inlinePosition[index];
+  });
+
+  return elements.map((el) => (el ? tops.get(el) ?? 0 : 0));
+}
+
 export function initStackingScroll(): void {
   const frames = Array.from(document.querySelectorAll<HTMLElement>('main > section'));
   if (frames.length === 0) return;
@@ -46,7 +73,10 @@ export function initStackingScroll(): void {
     button.title = frame.id || `Frame ${index + 1}`;
     button.setAttribute('aria-label', `Lompat ke frame ${index + 1}`);
     button.addEventListener('click', () => {
-      window.scrollTo({ top: frame.offsetTop, behavior: 'smooth' });
+      // TAMBAHAN: stacking scroll — ukur posisi asli frame dulu (bukan offsetTop,
+      // karena frame yang sedang stuck offsetTop-nya bergeser mengikuti scroll)
+      const top = measureElementTops(frames)[index];
+      window.scrollTo({ top, behavior: 'smooth' });
     });
     indicator.appendChild(button);
     return button;
@@ -95,7 +125,11 @@ export function initStackingScroll(): void {
     });
 
     frames.forEach((frame, index) => {
-      frame.classList.toggle('is-active', index === activeIndex);
+      const isActive = index === activeIndex;
+      frame.classList.toggle('is-active', isActive);
+      // TAMBAHAN: stacking scroll — sekali muncul, tetap muncul: animasi reveal
+      // tidak replay saat scroll naik-turun (halaman tidak terasa "refresh")
+      if (isActive) frame.classList.add('has-revealed');
     });
     indicatorButtons.forEach((button, index) => {
       button.classList.toggle('is-active', index === activeIndex);

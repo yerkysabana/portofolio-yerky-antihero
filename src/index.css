@@ -1615,70 +1615,70 @@ body.konami-chaos {
   }
 
   /* judul: slide-up */
-  .stack-frame.is-active .section-header {
+  .stack-frame.has-revealed .section-header {
     animation: stack-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
   }
 
-  .stack-frame.is-active .glitch-title {
+  .stack-frame.has-revealed .glitch-title {
     animation: stack-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
   }
 
   /* teks & panel: fade-in dengan jeda */
-  .stack-frame.is-active .speech-bubble {
+  .stack-frame.has-revealed .speech-bubble {
     animation: stack-fade 0.55s ease 0.18s both;
   }
 
-  .stack-frame.is-active .hero-desc {
+  .stack-frame.has-revealed .hero-desc {
     animation: stack-fade 0.55s ease 0.26s both;
   }
 
-  .stack-frame.is-active .hero-cta-group {
+  .stack-frame.has-revealed .hero-cta-group {
     animation: stack-fade 0.55s ease 0.34s both;
   }
 
-  .stack-frame.is-active .about-grid {
+  .stack-frame.has-revealed .about-grid {
     animation: stack-fade 0.55s ease 0.12s both;
   }
 
-  .stack-frame.is-active .about-facts-list {
+  .stack-frame.has-revealed .about-facts-list {
     animation: stack-fade 0.55s ease 0.28s both;
   }
 
-  .stack-frame.is-active .comic-stat-grid {
+  .stack-frame.has-revealed .comic-stat-grid {
     animation: stack-fade 0.55s ease 0.36s both;
   }
 
-  .stack-frame.is-active .skills-grid {
+  .stack-frame.has-revealed .skills-grid {
     animation: stack-fade 0.55s ease 0.14s both;
   }
 
-  .stack-frame.is-active .projects-grid {
+  .stack-frame.has-revealed .projects-grid {
     animation: stack-fade 0.55s ease 0.14s both;
   }
 
-  .stack-frame.is-active .exp-list {
+  .stack-frame.has-revealed .exp-list {
     animation: stack-fade 0.55s ease 0.14s both;
   }
 
-  .stack-frame.is-active .arcade-wrapper {
+  .stack-frame.has-revealed .arcade-wrapper {
     animation: stack-fade 0.55s ease 0.14s both;
   }
 
-  .stack-frame.is-active .contact-grid {
+  .stack-frame.has-revealed .contact-grid {
     animation: stack-fade 0.55s ease 0.14s both;
   }
 
   /* gambar: zoom-in */
-  .stack-frame.is-active .about-photo {
+  .stack-frame.has-revealed .about-photo {
     animation: stack-zoom 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
   }
 
   /* elemen yang sudah punya transform sendiri: fade saja (jangan diutak-atik) */
-  .stack-frame.is-active .hero-interactive-mask {
+  .stack-frame.has-revealed .hero-interactive-mask {
     animation: stack-fade-only 0.6s ease 0.1s both;
   }
 
-  .stack-frame.is-active .narrative-box {
+  .stack-frame.has-revealed .narrative-box {
     animation: stack-fade-only 0.6s ease 0.08s both;
   }
 }
