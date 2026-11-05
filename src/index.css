@@ -1506,3 +1506,262 @@ body.konami-chaos {
     scroll-behavior: auto !important;
   }
 }
+
+/* ========================================================
+   TAMBAHAN: stacking scroll — frame menumpuk saat scroll
+   Cara pakai: blok ini cukup di-append ke src/index.css.
+   Kelas .stack-frame dipasang JS ke setiap <main> > section.
+   ======================================================== */
+:root {
+  --stack-offset: 0px;  /* offset sticky frame dari atas viewport */
+  --scale-step: 0.08;   /* penyusutan frame saat tertumpuk (1 → 0.92) */
+  --rotate-in: 3deg;    /* kemiringan frame saat masuk dari bawah */
+  --rotate-out: 2deg;   /* kemiringan frame saat tertumpuk */
+  --radius: 20px;       /* sudut membulat tiap frame */
+  --stack-dark: 0.55;   /* kekuatan overlay gelap saat tertumpuk */
+}
+
+/* TAMBAHAN: stacking scroll — frame sticky 100svh, menumpuk seperti kartu */
+.stack-frame {
+  position: sticky;
+  top: var(--stack-offset);
+  z-index: 1;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background-color: var(--color-bg-dark);
+  box-shadow: 0 -10px 0 rgba(0, 0, 0, 0.9), 0 -32px 70px rgba(0, 0, 0, 0.55);
+
+  /* Progres diisi JS dari posisi scroll:
+     --enter = 0..1 (frame masuk/menempel), --stack-progress = 0..1 (frame tertumpuk) */
+  --enter: 1;
+  --stack-progress: 0;
+  transform:
+    translateY(calc(var(--stack-offset) * var(--stack-progress)))
+    scale(calc(1 - var(--scale-step) * var(--stack-progress)))
+    rotate(calc(var(--rotate-in) * (1 - var(--enter)) - var(--rotate-out) * var(--stack-progress)));
+  will-change: transform;
+}
+
+/* TAMBAHAN: stacking scroll — pola halftone di dalam frame (samakan dengan body) */
+.stack-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(200, 16, 46, 0.08) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* TAMBAHAN: stacking scroll — overlay gelap (opacity) saat frame tertumpuk */
+.stack-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: calc(var(--stack-dark) * var(--stack-progress));
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* TAMBAHAN: stacking scroll — konten frame di atas halftone, di bawah overlay */
+.stack-frame > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* TAMBAHAN: stacking scroll — frame yang isinya lebih tinggi dari viewport:
+   scroll normal dulu (tidak dipotong), tidak menumpuk */
+.stack-frame--tall {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: visible;
+  transform: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.stack-frame--tall::after {
+  display: none;
+}
+
+/* TAMBAHAN: stacking scroll — konten muncul bertahap saat frame aktif.
+   Animasi (bukan transition) supaya tidak bentrok dengan transition/hover
+   yang sudah ada. Hanya transform + opacity agar 60fps. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes stack-rise {
+    from { opacity: 0; transform: translateY(46px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes stack-fade {
+    from { opacity: 0; transform: translateY(26px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes stack-zoom {
+    from { opacity: 0; transform: scale(1.18); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes stack-fade-only {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* judul: slide-up */
+  .stack-frame.is-active .section-header {
+    animation: stack-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+  }
+
+  .stack-frame.is-active .glitch-title {
+    animation: stack-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+  }
+
+  /* teks & panel: fade-in dengan jeda */
+  .stack-frame.is-active .speech-bubble {
+    animation: stack-fade 0.55s ease 0.18s both;
+  }
+
+  .stack-frame.is-active .hero-desc {
+    animation: stack-fade 0.55s ease 0.26s both;
+  }
+
+  .stack-frame.is-active .hero-cta-group {
+    animation: stack-fade 0.55s ease 0.34s both;
+  }
+
+  .stack-frame.is-active .about-grid {
+    animation: stack-fade 0.55s ease 0.12s both;
+  }
+
+  .stack-frame.is-active .about-facts-list {
+    animation: stack-fade 0.55s ease 0.28s both;
+  }
+
+  .stack-frame.is-active .comic-stat-grid {
+    animation: stack-fade 0.55s ease 0.36s both;
+  }
+
+  .stack-frame.is-active .skills-grid {
+    animation: stack-fade 0.55s ease 0.14s both;
+  }
+
+  .stack-frame.is-active .projects-grid {
+    animation: stack-fade 0.55s ease 0.14s both;
+  }
+
+  .stack-frame.is-active .exp-list {
+    animation: stack-fade 0.55s ease 0.14s both;
+  }
+
+  .stack-frame.is-active .arcade-wrapper {
+    animation: stack-fade 0.55s ease 0.14s both;
+  }
+
+  .stack-frame.is-active .contact-grid {
+    animation: stack-fade 0.55s ease 0.14s both;
+  }
+
+  /* gambar: zoom-in */
+  .stack-frame.is-active .about-photo {
+    animation: stack-zoom 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+  }
+
+  /* elemen yang sudah punya transform sendiri: fade saja (jangan diutak-atik) */
+  .stack-frame.is-active .hero-interactive-mask {
+    animation: stack-fade-only 0.6s ease 0.1s both;
+  }
+
+  .stack-frame.is-active .narrative-box {
+    animation: stack-fade-only 0.6s ease 0.08s both;
+  }
+}
+
+/* TAMBAHAN: stacking scroll — mobile: rotasi & offset lebih kecil */
+@media (max-width: 900px) {
+  :root {
+    --stack-offset: 0px;
+    --scale-step: 0.05;
+    --rotate-in: 1.5deg;
+    --rotate-out: 1deg;
+    --radius: 16px;
+  }
+}
+
+/* TAMBAHAN: stacking scroll — hormati prefers-reduced-motion:
+   matikan scale/rotasi/overlay, frame tampil biasa (tetap sticky) */
+@media (prefers-reduced-motion: reduce) {
+  .stack-frame {
+    transform: none;
+  }
+
+  .stack-frame::after {
+    display: none;
+  }
+}
+
+/* TAMBAHAN: stacking scroll — bar progres scroll tipis di atas halaman */
+.stack-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-yellow));
+  z-index: 1001;
+  pointer-events: none;
+}
+
+/* TAMBAHAN: stacking scroll — indikator nomor frame (01, 02, ...) bisa diklik */
+.stack-indicator {
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1001;
+}
+
+.stack-indicator button {
+  font-family: var(--font-comic);
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  background: rgba(23, 23, 23, 0.85);
+  color: var(--color-text-muted);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 #000;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s, transform 0.15s;
+}
+
+.stack-indicator button:hover {
+  transform: translateX(-4px);
+  color: #fff;
+}
+
+.stack-indicator button.is-active {
+  background: var(--color-yellow);
+  color: #000;
+  transform: translateX(-6px) rotate(-2deg);
+}
+
+@media (max-width: 900px) {
+  .stack-indicator {
+    right: 8px;
+    gap: 6px;
+  }
+
+  .stack-indicator button {
+    font-size: 0.75rem;
+    padding: 1px 6px;
+  }
+}

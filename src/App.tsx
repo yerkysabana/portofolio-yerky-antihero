@@ -14,6 +14,7 @@ import { MarqueeTicker } from './components/MarqueeTicker';
 import { ProjectsSection } from './components/ProjectsSection';
 import { ScrollTopButton } from './components/ScrollTopButton';
 import { SkillsSection } from './components/SkillsSection';
+import { initStackingScroll } from './lib/stackingScroll'; // TAMBAHAN: stacking scroll
 import { useKonamiCode } from './hooks/useKonamiCode';
 import { playBoomSound } from './hooks/useSoundFx';
 
@@ -27,6 +28,11 @@ export default function App() {
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 900);
     return () => clearTimeout(timer);
+  }, []);
+
+  // TAMBAHAN: stacking scroll — aktifkan efek frame menumpuk setelah mount
+  useEffect(() => {
+    initStackingScroll();
   }, []);
 
   // Toggle kursor custom → kelas di body
