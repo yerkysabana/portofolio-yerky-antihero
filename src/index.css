@@ -1,0 +1,1508 @@
+/* ========================================================
+   PORTOFOLIO ANTI-HERO COMIC — PORT DARI TEMPLATE STITCH
+   ======================================================== */
+:root {
+  --color-primary: #C8102E;      /* Merah Darah Khas */
+  --color-primary-dark: #8B0000; /* Merah Marun Gelap */
+  --color-bg-dark: #0D0D0D;      /* Hitam Pekat */
+  --color-surface: #171717;      /* Abu Arang Panel */
+  --color-surface-hover: #222222;
+  --color-yellow: #FFCC00;       /* Kuning Balon Komik / Emas */
+  --color-text: #F3F3F3;         /* Teks Putih Terang */
+  --color-text-muted: #A3A3A3;
+  --font-comic: 'Bangers', cursive, sans-serif;
+  --font-body: 'Poppins', sans-serif;
+  --comic-border: 4px solid #000;
+  --comic-shadow: 6px 6px 0px #000;
+  --comic-shadow-red: 6px 6px 0px var(--color-primary-dark);
+  --comic-shadow-yellow: 6px 6px 0px #000;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* Pola Halftone Latar Belakang Komik */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(200, 16, 46, 0.08) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ========================================================
+   CUSTOM CURSOR
+   ======================================================== */
+.custom-cursor {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-cursor-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--color-yellow);
+}
+
+.custom-cursor svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: rotate-slow 10s linear infinite;
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (min-width: 1024px) {
+  body.has-custom-cursor,
+  body.has-custom-cursor a,
+  body.has-custom-cursor button,
+  body.has-custom-cursor input,
+  body.has-custom-cursor textarea {
+    cursor: none !important;
+  }
+}
+
+/* ========================================================
+   LOADING SCREEN
+   ======================================================== */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  background-color: #0b0b0b;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-mask {
+  width: 110px;
+  height: 130px;
+  position: relative;
+  animation: pulse-squash 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-squash {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08) translateY(-4px); }
+}
+
+.loader-text {
+  font-family: var(--font-comic);
+  font-size: 2.2rem;
+  letter-spacing: 2px;
+  color: var(--color-yellow);
+  text-shadow: 3px 3px 0 #000, -2px -2px 0 var(--color-primary);
+  margin-top: 20px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.loader-subtext {
+  font-size: 0.95rem;
+  color: #bbb;
+  background: #1e1e1e;
+  border: 2px solid #000;
+  padding: 6px 14px;
+  box-shadow: 3px 3px 0 #000;
+  margin-top: 10px;
+  font-weight: 500;
+  transform: rotate(-1.5deg);
+}
+
+/* ========================================================
+   NAVBAR (STICKY PANEL KOMIK)
+   ======================================================== */
+.comic-navbar {
+  position: sticky;
+  top: 12px;
+  z-index: 1000;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.nav-inner {
+  background: var(--color-surface);
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: skew(-1.5deg);
+  border-radius: 4px;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #fff;
+  transform: skew(1.5deg);
+  user-select: none;
+}
+
+.logo-badge {
+  width: 44px;
+  height: 44px;
+  background: var(--color-primary);
+  border: 3px solid #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0 #000;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo-badge:hover {
+  transform: scale(1.15) rotate(10deg);
+}
+
+.brand-text {
+  font-family: var(--font-comic);
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.brand-text span {
+  color: var(--color-primary);
+}
+
+.nav-links {
+  display: flex;
+  gap: 18px;
+  list-style: none;
+  transform: skew(1.5deg);
+  align-items: center;
+}
+
+.nav-links a {
+  color: #fff;
+  font-family: var(--font-comic);
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 2px;
+  position: relative;
+  transition: all 0.15s ease;
+  display: inline-block;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #000;
+  background-color: var(--color-yellow);
+  transform: rotate(-2deg) scale(1.08);
+  box-shadow: 3px 3px 0 #000;
+}
+
+.nav-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: skew(1.5deg);
+}
+
+.btn-tool {
+  background: #2a2a2a;
+  border: 2px solid #000;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.1s, background-color 0.15s;
+}
+
+.btn-tool:hover {
+  background-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: var(--color-primary);
+  border: 3px solid #000;
+  color: #fff;
+  font-family: var(--font-comic);
+  font-size: 1.4rem;
+  padding: 4px 12px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+}
+
+/* ========================================================
+   BREAKING THE 4TH WALL POPUP (KOMENTAR KARAKTER)
+   ======================================================== */
+.fourth-wall-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.fourth-wall-bubble {
+  background: var(--color-yellow);
+  color: #000;
+  border: 3px solid #000;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-family: var(--font-comic);
+  font-size: 1.15rem;
+  max-width: 250px;
+  box-shadow: 4px 4px 0 #000;
+  position: relative;
+  pointer-events: auto;
+  transform-origin: bottom right;
+  animation: bubble-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fourth-wall-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 12px;
+  right: -10px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 10px solid var(--color-yellow);
+}
+
+.fourth-wall-bubble::before {
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  right: -14px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 13px solid #000;
+}
+
+.fourth-wall-avatar {
+  width: 60px;
+  height: 60px;
+  background: var(--color-primary);
+  border: 3px solid #000;
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fourth-wall-avatar:hover {
+  transform: scale(1.15) rotate(-8deg);
+}
+
+@keyframes bubble-pop {
+  0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* ========================================================
+   EFEK KLIK BOOM / POW / BAMF & SAYATAN KATANA
+   ======================================================== */
+.comic-splat {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-comic);
+  font-size: 2.8rem;
+  letter-spacing: 1px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 4px 4px 0 #000, -2px -2px 0 var(--color-primary-dark);
+  animation: splat-anim 0.55s ease-out forwards;
+  user-select: none;
+}
+
+@keyframes splat-anim {
+  0% { transform: translate(-50%, -50%) scale(0.2) rotate(calc(var(--rot, 0deg) - 20deg)); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.3) rotate(var(--rot, 0deg)); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.6) rotate(var(--rot, 0deg)); opacity: 0; }
+}
+
+.katana-slash-line {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99997;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #ffffff, var(--color-primary), #ffffff, transparent);
+  box-shadow: 0 0 14px #ffffff, 0 0 25px var(--color-primary);
+  transform-origin: left center;
+  animation: slash-anim 0.35s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes slash-anim {
+  0% { transform: scaleX(0); opacity: 1; }
+  60% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1.1); opacity: 0; }
+}
+
+.screen-shake {
+  animation: screen-shake-anim 0.22s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes screen-shake-anim {
+  10%, 90% { transform: translate3d(-2px, 2px, 0); }
+  20%, 80% { transform: translate3d(3px, -2px, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 4px, 0); }
+  40%, 60% { transform: translate3d(4px, -3px, 0); }
+}
+
+/* ========================================================
+   MARQUEE TEKS KOMIK
+   ======================================================== */
+.comic-marquee-container {
+  background: var(--color-primary);
+  border-top: 3px solid #000;
+  border-bottom: 3px solid #000;
+  padding: 10px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transform: rotate(-1.5deg) scale(1.01);
+  margin: 40px 0;
+  box-shadow: 0 6px 0 #000;
+  user-select: none;
+}
+
+.comic-marquee-content {
+  display: inline-block;
+  font-family: var(--font-comic);
+  font-size: 1.7rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 2px 2px 0 #000;
+  animation: marquee-anim 16s linear infinite;
+}
+
+@keyframes marquee-anim {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ========================================================
+   LAYOUT SEKSI UMUM & PANEL KOMIK
+   ======================================================== */
+section {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 70px 20px;
+}
+
+.section-header {
+  margin-bottom: 45px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title {
+  font-family: var(--font-comic);
+  font-size: 3.4rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 4px 4px 0 #000, -2px -2px 0 var(--color-primary);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.comic-tag {
+  background: var(--color-yellow);
+  color: #000;
+  border: 3px solid #000;
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  padding: 3px 12px;
+  display: inline-block;
+  box-shadow: 3px 3px 0 #000;
+  transform: rotate(-3deg);
+  margin-bottom: 8px;
+}
+
+.comic-panel {
+  background: var(--color-surface);
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  border-radius: 4px;
+  padding: 28px;
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+}
+
+.comic-panel:hover {
+  box-shadow: 8px 8px 0 #000;
+}
+
+/* Kotak Narasi Komik Kuning */
+.narrative-box {
+  background: var(--color-yellow);
+  color: #000;
+  border: 3px solid #000;
+  padding: 12px 18px;
+  font-family: var(--font-comic);
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  box-shadow: 4px 4px 0 #000;
+  margin-bottom: 20px;
+  display: inline-block;
+  transform: rotate(-1deg);
+}
+
+/* Balon Dialog */
+.speech-bubble {
+  background: #fff;
+  color: #000;
+  border: 3px solid #000;
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  position: relative;
+  box-shadow: 4px 4px 0 #000;
+  margin-bottom: 24px;
+  display: inline-block;
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 32px;
+  border-width: 12px 12px 0;
+  border-style: solid;
+  border-color: #fff transparent;
+  display: block;
+  width: 0;
+}
+
+.speech-bubble::before {
+  content: "";
+  position: absolute;
+  bottom: -16px;
+  left: 30px;
+  border-width: 14px 14px 0;
+  border-style: solid;
+  border-color: #000 transparent;
+  display: block;
+  width: 0;
+}
+
+/* Tombol Bergaya Komik */
+.comic-btn {
+  font-family: var(--font-comic);
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  text-decoration: none;
+  padding: 10px 24px;
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: #fff;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 2px;
+}
+
+.comic-btn:hover {
+  transform: translate(-3px, -3px) rotate(-1deg) scale(1.03);
+  box-shadow: 9px 9px 0 #000;
+  background: #e01133;
+}
+
+.comic-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #000;
+}
+
+.comic-btn-secondary {
+  background: var(--color-yellow);
+  color: #000;
+}
+
+.comic-btn-secondary:hover {
+  background: #ffe04d;
+}
+
+/* ========================================================
+   HERO SECTION
+   ======================================================== */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  align-items: center;
+  min-height: 75vh;
+}
+
+.hero-content {
+  position: relative;
+}
+
+.glitch-title {
+  font-family: var(--font-comic);
+  font-size: clamp(3.2rem, 7vw, 5.8rem);
+  line-height: 0.95;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 5px 5px 0 #000, -3px -3px 0 var(--color-primary);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.glitch-title span.highlight {
+  color: var(--color-primary);
+  text-shadow: 5px 5px 0 #000, -2px -2px 0 var(--color-yellow);
+}
+
+.bouncing-letter {
+  display: inline-block;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bouncing-letter:hover {
+  transform: translateY(-16px) scale(1.3) rotate(10deg);
+  color: var(--color-yellow);
+}
+
+.hero-desc {
+  font-size: 1.15rem;
+  color: #ddd;
+  margin-bottom: 28px;
+  max-width: 580px;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Maskot Topeng Hero Interaktif */
+.hero-interactive-mask {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.interactive-mask-wrapper {
+  width: 320px;
+  height: 380px;
+  position: relative;
+  cursor: crosshair;
+  filter: drop-shadow(10px 10px 0px #000);
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+}
+
+.mask-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.eye-pupil {
+  transition: transform 0.08s ease-out;
+  transform-origin: center;
+}
+
+.mask-caption {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  background: var(--color-yellow);
+  color: #000;
+  border: 3px solid #000;
+  padding: 6px 14px;
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  box-shadow: 3px 3px 0 #000;
+  white-space: nowrap;
+}
+
+/* ========================================================
+   TENTANG SAYA
+   ======================================================== */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 36px;
+  align-items: center;
+}
+
+.about-image-card {
+  position: relative;
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  background: #111;
+  aspect-ratio: 4/5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+  transform: rotate(-2deg);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.about-image-card:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.about-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.08) saturate(1.05);
+}
+
+.slot-placeholder {
+  border: 3px dashed var(--color-primary);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: rgba(200, 16, 46, 0.05);
+  border-radius: 4px;
+}
+
+.slot-placeholder svg {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 12px;
+  fill: var(--color-primary);
+}
+
+.about-facts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.fact-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 4px solid var(--color-primary);
+  padding: 10px 14px;
+  border-radius: 0 4px 4px 0;
+}
+
+.fact-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+/* Kartu statistik komik (IPK, proyek, dll) */
+.comic-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.comic-stat-card {
+  background: var(--color-surface);
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  border-radius: 4px;
+  padding: 20px;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.comic-stat-card:hover {
+  transform: translateY(-6px) rotate(-1deg);
+}
+
+.comic-stat-card.highlight {
+  background: var(--color-primary);
+}
+
+.comic-stat-label {
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--color-yellow);
+}
+
+.comic-stat-card.highlight .comic-stat-label {
+  color: #fff;
+}
+
+.comic-stat-value {
+  font-family: var(--font-comic);
+  font-size: 2.6rem;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 3px 3px 0 #000;
+  margin: 4px 0;
+}
+
+.comic-stat-sublabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.comic-stat-card.highlight .comic-stat-sublabel {
+  color: #ffd9df;
+}
+
+.comic-stat-desc {
+  font-size: 0.85rem;
+  color: #bbb;
+  margin-top: 8px;
+}
+
+.comic-stat-card.highlight .comic-stat-desc {
+  color: #ffe6ea;
+}
+
+/* ========================================================
+   SKILLS SECTION (BULLET PROGRESS BARS)
+   ======================================================== */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.skill-card {
+  background: var(--color-surface);
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  padding: 20px;
+  position: relative;
+}
+
+.skill-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.skill-name {
+  font-family: var(--font-comic);
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.skill-percent {
+  font-family: var(--font-comic);
+  font-size: 1.25rem;
+  color: var(--color-yellow);
+}
+
+.bullet-meter {
+  height: 20px;
+  background: #000;
+  border: 2px solid #333;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+}
+
+.bullet-fill {
+  height: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-primary),
+    var(--color-primary) 10px,
+    var(--color-primary-dark) 10px,
+    var(--color-primary-dark) 20px
+  );
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+/* ========================================================
+   PROYEK SECTION (TILT 3D & STAMP APPROVED)
+   ======================================================== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 32px;
+}
+
+.project-card {
+  background: var(--color-surface);
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card:hover {
+  box-shadow: 10px 10px 0px #000;
+}
+
+.project-thumb {
+  height: 200px;
+  background: #111;
+  border-bottom: 3px solid #000;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-stamp {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: 4px dashed var(--color-primary);
+  color: var(--color-primary);
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  padding: 4px 10px;
+  transform: rotate(14deg);
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 2px 2px 0 #000;
+  opacity: 0.9;
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.project-card:hover .project-stamp {
+  transform: rotate(-8deg) scale(1.15);
+  color: var(--color-yellow);
+  border-color: var(--color-yellow);
+}
+
+.project-body {
+  padding: 22px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.project-title {
+  font-family: var(--font-comic);
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.project-desc {
+  color: #ccc;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.p-tag {
+  background: #000;
+  border: 1.5px solid #444;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  color: var(--color-yellow);
+}
+
+/* Panel detail proyek (metrik + fitur) */
+.project-details {
+  border-top: 3px dashed #333;
+  margin-top: 4px;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.project-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.project-metric-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.85rem;
+  border-bottom: 1px dotted #333;
+  padding-bottom: 6px;
+}
+
+.project-metric-row .m-label {
+  color: var(--color-yellow);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.project-metric-row .m-value {
+  color: #ddd;
+  text-align: right;
+}
+
+.project-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.project-features li {
+  font-size: 0.85rem;
+  color: #ccc;
+  padding-left: 20px;
+  position: relative;
+}
+
+.project-features li::before {
+  content: "⚔";
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+}
+
+/* ========================================================
+   CATATAN MISI (PENGALAMAN)
+   ======================================================== */
+.exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.exp-item {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+  background: var(--color-surface);
+  border: var(--comic-border);
+  box-shadow: var(--comic-shadow);
+  border-radius: 4px;
+  padding: 24px;
+  transition: transform 0.2s ease;
+}
+
+.exp-item:hover {
+  transform: translateX(6px);
+}
+
+.exp-period {
+  font-family: var(--font-comic);
+  font-size: 1.3rem;
+  color: var(--color-yellow);
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.exp-location {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.exp-role {
+  font-family: var(--font-comic);
+  font-size: 1.6rem;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.exp-company {
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.exp-desc {
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+/* ========================================================
+   MINI GAME ZONE (3 GAMES)
+   ======================================================== */
+.arcade-wrapper {
+  background: #080808;
+  border: 5px solid #000;
+  box-shadow: 10px 10px 0 #000, -4px -4px 0 var(--color-primary);
+  border-radius: 8px;
+  padding: 24px;
+  position: relative;
+}
+
+.arcade-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 3px solid #222;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+}
+
+.game-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  font-family: var(--font-comic);
+  font-size: 1.2rem;
+  padding: 8px 18px;
+  background: #1c1c1c;
+  color: #fff;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tab-btn.active, .tab-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.arcade-highscore {
+  font-family: var(--font-comic);
+  font-size: 1.1rem;
+  color: #bbb;
+}
+
+.arcade-highscore span {
+  color: var(--color-yellow);
+}
+
+.arcade-viewport {
+  width: 100%;
+  height: 480px;
+  background: #000;
+  border: 4px solid #1a1a1a;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9);
+  user-select: none;
+}
+
+.game-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* HUD Game Bar */
+.game-hud {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-comic);
+  font-size: 1.3rem;
+  color: var(--color-yellow);
+  text-shadow: 2px 2px 0 #000;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hud-chip {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #000;
+  padding: 4px 12px;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.overlay-start, .overlay-gameover {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  text-align: center;
+  padding: 24px;
+}
+
+.overlay-title {
+  font-family: var(--font-comic);
+  font-size: 3rem;
+  color: var(--color-yellow);
+  text-shadow: 4px 4px 0 #000, -2px -2px 0 var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.overlay-desc {
+  color: #eee;
+  font-size: 1rem;
+  max-width: 460px;
+  margin-bottom: 22px;
+}
+
+.overlay-score {
+  font-family: var(--font-comic);
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.overlay-score span {
+  color: var(--color-yellow);
+}
+
+/* Canvas untuk Mini-Game 1, 2, 3 */
+.game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+/* ========================================================
+   KONTAK SECTION
+   ======================================================== */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: var(--font-comic);
+  font-size: 1.25rem;
+  color: var(--color-yellow);
+  letter-spacing: 0.5px;
+}
+
+.comic-input, .comic-textarea {
+  background: #0f0f0f;
+  border: 3px solid #000;
+  padding: 12px 14px;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  border-radius: 3px;
+  box-shadow: 4px 4px 0 #000;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.comic-input:focus, .comic-textarea:focus {
+  border-color: var(--color-primary);
+  background: #141414;
+}
+
+.comic-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-success {
+  margin-top: 14px;
+  background: var(--color-yellow);
+  color: #000;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  padding: 12px 16px;
+  font-family: var(--font-comic);
+  font-size: 1.15rem;
+  transform: rotate(-1deg);
+  animation: bubble-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ========================================================
+   FOOTER & SCROLL TO TOP
+   ======================================================== */
+footer {
+  background: #070707;
+  border-top: 4px solid #000;
+  padding: 50px 20px 30px;
+  text-align: center;
+  position: relative;
+}
+
+.footer-brand {
+  font-family: var(--font-comic);
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.footer-brand span {
+  color: var(--color-primary);
+}
+
+.footer-note {
+  color: #888;
+  font-size: 0.9rem;
+  max-width: 600px;
+  margin: 0 auto 20px;
+}
+
+.footer-legal {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 52px;
+  height: 52px;
+  background: var(--color-primary);
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.scroll-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-top-btn:hover {
+  transform: translateY(-8px) scale(1.15) rotate(15deg);
+  background: var(--color-yellow);
+  color: #000;
+}
+
+/* ========================================================
+   EASTER EGG (KONAMI CODE & CRACKED SCREEN)
+   ======================================================== */
+body.konami-chaos {
+  filter: invert(1) hue-rotate(180deg);
+  animation: chaos-wobble 0.6s infinite alternate;
+}
+
+@keyframes chaos-wobble {
+  0% { transform: skew(1deg, 0.5deg); }
+  100% { transform: skew(-1deg, -0.5deg); }
+}
+
+.cracked-screen-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999999;
+  background: rgba(0, 0, 0, 0.35);
+  display: none;
+}
+
+.cracked-screen-overlay.active {
+  display: block;
+}
+
+.cracked-screen-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-yellow);
+  color: #000;
+  border: 4px solid #000;
+  padding: 20px 30px;
+  font-family: var(--font-comic);
+  font-size: 2rem;
+  box-shadow: 6px 6px 0 #000;
+  text-align: center;
+}
+
+.konami-toast {
+  position: fixed;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  background: var(--color-yellow);
+  color: #000;
+  border: 4px solid #000;
+  box-shadow: 6px 6px 0 #000;
+  padding: 16px 26px;
+  font-family: var(--font-comic);
+  font-size: 1.6rem;
+  z-index: 999999;
+  text-align: center;
+  animation: bubble-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ========================================================
+   RESPONSIVE DESIGN (MOBILE & TABLET)
+   ======================================================== */
+@media (max-width: 900px) {
+  .hero-grid, .about-grid, .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  .interactive-mask-wrapper {
+    width: 260px;
+    height: 310px;
+    margin: 0 auto;
+  }
+  .nav-links {
+    display: none;
+  }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 65px;
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border: var(--comic-border);
+    box-shadow: var(--comic-shadow);
+    padding: 20px;
+    z-index: 1001;
+  }
+  .mobile-menu-btn {
+    display: block;
+  }
+  .section-title {
+    font-size: 2.6rem;
+  }
+  .glitch-title {
+    font-size: 3rem;
+  }
+  .arcade-viewport {
+    height: 420px;
+  }
+  .exp-item {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .fourth-wall-widget {
+    display: none;
+  }
+}
+
+/* Hormati prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
