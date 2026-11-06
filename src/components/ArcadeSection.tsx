@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { CatchFoodGame } from '../games/CatchFoodGame';
 import { ShootTargetGame } from '../games/ShootTargetGame';
 import { TacoSlashGame } from '../games/TacoSlashGame';
-
-const GAME_TABS = [
-  { id: 1, label: '1. TEMBAK TARGET' },
-  { id: 2, label: '2. TEBAS TACO (KATANA)' },
-  { id: 3, label: '3. TANGKAP CHIMICHANGA' },
-];
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 /** Arcade zone dengan 3 mini game dan high score global. */
 export function ArcadeSection() {
   const [activeGame, setActiveGame] = useState(1);
   const [highScore, setHighScore] = useState(0);
+  // TAMBAHAN: i18n — label tab game mengikuti bahasa aktif
+  const { t } = useLanguage();
+
+  const gameTabs = [
+    { id: 1, label: t('arcade.tab1') },
+    { id: 2, label: t('arcade.tab2') },
+    { id: 3, label: t('arcade.tab3') },
+  ];
 
   const handleScore = (score: number) => {
     setHighScore((current) => (score > current ? score : current));
@@ -21,16 +24,16 @@ export function ArcadeSection() {
   return (
     <section id="arcade">
       <div className="section-header">
-        <div className="comic-tag">BAB V: ZONA RELAKSASI ANTI-HERO</div>
+        <div className="comic-tag">{t('arcade.tag')}</div>
         <h2 className="section-title">
-          MINI GAME ZONE <span>🎯</span>
+          {t('arcade.title')} <span>🎯</span>
         </h2>
       </div>
 
       <div className="arcade-wrapper">
         <div className="arcade-header">
           <div className="game-tabs">
-            {GAME_TABS.map((tab) => (
+            {gameTabs.map((tab) => (
               <button
                 key={tab.id}
                 className={`tab-btn${activeGame === tab.id ? ' active' : ''}`}
@@ -41,7 +44,7 @@ export function ArcadeSection() {
             ))}
           </div>
           <div className="arcade-highscore">
-            🏆 HIGH SCORE: <span>{highScore}</span>
+            {t('arcade.highScore')} <span>{highScore}</span>
           </div>
         </div>
 

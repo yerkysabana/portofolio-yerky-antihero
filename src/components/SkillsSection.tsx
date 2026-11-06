@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { skillsData } from '../data/portfolioData';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 /** Skill arsenal dengan bullet-meter yang terisi saat terlihat. */
 export function SkillsSection() {
   const gridRef = useRef<HTMLDivElement>(null);
+  // TAMBAHAN: i18n
+  const { t } = useLanguage();
 
   useEffect(() => {
     const grid = gridRef.current;
@@ -28,9 +31,9 @@ export function SkillsSection() {
   return (
     <section id="skill">
       <div className="section-header">
-        <div className="comic-tag">BAB III: ARSENAL TEMPUR</div>
+        <div className="comic-tag">{t('skills.tag')}</div>
         <h2 className="section-title">
-          KEAHLIAN &amp; SKILL <span>⚔️</span>
+          {t('skills.title')} <span>⚔️</span>
         </h2>
       </div>
 

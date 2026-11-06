@@ -1,15 +1,19 @@
 import { projectsData } from '../data/portfolioData';
 // TAMBAHAN: detail proyek — buka halaman detail dari kartu
 import { openProjectDetail } from '../lib/projectDetail';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 /** Proyek pilihan: kartu bergaya stempel komik; tombol membuka halaman detail. */
 export function ProjectsSection() {
+  // TAMBAHAN: i18n
+  const { t, loc } = useLanguage();
+
   return (
     <section id="proyek">
       <div className="section-header">
-        <div className="comic-tag">BAB IV: MISI-MISI BERBAHAYA</div>
+        <div className="comic-tag">{t('projects.tag')}</div>
         <h2 className="section-title">
-          PROYEK PILIHAN <span>🚀</span>
+          {t('projects.title')} <span>🚀</span>
         </h2>
       </div>
 
@@ -28,8 +32,8 @@ export function ProjectsSection() {
               </div>
               <div className="project-body">
                 <div>
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-desc">{project.summary}</p>
+                  <h3 className="project-title">{loc(project.title)}</h3>
+                  <p className="project-desc">{loc(project.summary)}</p>
                   <div className="project-tags">
                     {project.tags.map((tag) => (
                       <span className="p-tag" key={tag}>
@@ -45,7 +49,7 @@ export function ProjectsSection() {
                   style={{ padding: '6px 16px', fontSize: '1.1rem', width: 'fit-content' }}
                   onClick={(event) => openProjectDetail(project.id, event.currentTarget)}
                 >
-                  PELAJARI KASUS ➔
+                  {t('projects.cta')}
                 </button>
               </div>
           </div>

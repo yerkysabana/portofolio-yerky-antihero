@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { playBoomSound, playScoreSound } from '../hooks/useSoundFx';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 interface Target {
   x: number;
@@ -15,6 +16,8 @@ export function ShootTargetGame({ onScore }: { onScore: (score: number) => void 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [phase, setPhase] = useState<'start' | 'playing' | 'over'>('start');
+  // TAMBAHAN: i18n
+  const { t } = useLanguage();
 
   const targetsRef = useRef<Target[]>([]);
   const runningRef = useRef(false);
@@ -134,10 +137,10 @@ export function ShootTargetGame({ onScore }: { onScore: (score: number) => void 
     <div className="game-screen">
       <div className="game-hud">
         <div className="hud-chip">
-          SKOR: <span>{score}</span>
+          {t('game.score')} <span>{score}</span>
         </div>
         <div className="hud-chip">
-          WAKTU: <span>{timeLeft}</span>s
+          {t('game.time')} <span>{timeLeft}</span>s
         </div>
       </div>
       <canvas
@@ -153,24 +156,21 @@ export function ShootTargetGame({ onScore }: { onScore: (score: number) => void 
         <div className={phase === 'start' ? 'overlay-start' : 'overlay-gameover'}>
           {phase === 'start' ? (
             <>
-              <h3 className="overlay-title">TEMBAK TARGET!</h3>
-              <p className="overlay-desc">
-                Topeng dan target bermunculan secara acak. Klik atau tap target secepat mungkin sebelum waktu 30
-                detik habis!
-              </p>
+              <h3 className="overlay-title">{t('shoot.title')}</h3>
+              <p className="overlay-desc">{t('shoot.desc')}</p>
               <button className="comic-btn" onClick={start}>
-                MULAI TEMBAK! 🎯
+                {t('shoot.start')}
               </button>
             </>
           ) : (
             <>
-              <h3 className="overlay-title">WAKTU HABIS!</h3>
-              <p className="overlay-desc">&quot;Refleksmu lumayan... untuk ukuran orang yang belum ngopi.&quot;</p>
+              <h3 className="overlay-title">{t('shoot.over')}</h3>
+              <p className="overlay-desc">{t('shoot.overDesc')}</p>
               <p className="overlay-score">
-                SKOR AKHIR: <span>{score}</span>
+                {t('game.finalScore')} <span>{score}</span>
               </p>
               <button className="comic-btn" onClick={start}>
-                MAIN LAGI 🔄
+                {t('shoot.again')}
               </button>
             </>
           )}

@@ -17,12 +17,15 @@ import { SkillsSection } from './components/SkillsSection';
 import { initStackingScroll } from './lib/stackingScroll'; // TAMBAHAN: stacking scroll
 import { useKonamiCode } from './hooks/useKonamiCode';
 import { playBoomSound } from './hooks/useSoundFx';
+import { useLanguage } from './i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [cursorOn, setCursorOn] = useState(true);
   const [cracked, setCracked] = useState(false);
   const [konami, setKonami] = useState(false);
+  // TAMBAHAN: i18n — teks toast Konami ikut bahasa aktif
+  const { t } = useLanguage();
 
   // Loading screen hilang setelah mount
   useEffect(() => {
@@ -93,9 +96,9 @@ export default function App() {
 
       {konami && (
         <div className="konami-toast">
-          💥 KONAMI CODE TERDETEKSI!
+          {t('konami.title')}
           <br />
-          SELAMAT DATANG DI SEMESTA TERBALIK!
+          {t('konami.sub')}
         </div>
       )}
     </>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { profileData } from '../data/portfolioData';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 /** Kontak: info markas + form transmisi (mailto). */
 export function ContactSection() {
@@ -7,11 +8,14 @@ export function ContactSection() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [sent, setSent] = useState(false);
+  // TAMBAHAN: i18n
+  const { t, loc } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const subject = `Pesan dari ${name || 'pengunjung'} — Portofolio Anti-Hero`;
-    const body = `Nama: ${name}\nEmail: ${email}\n\n${message}`;
+    // TAMBAHAN: i18n — subjek & isi email ikut bahasa yang sedang aktif
+    const subject = t('contact.mailSubject').replace('{name}', name || t('contact.mailVisitor'));
+    const body = `${t('contact.mailName')}: ${name}\n${t('contact.mailEmail')}: ${email}\n\n${message}`;
     window.location.href = `mailto:${profileData.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     setSent(true);
   };
@@ -19,9 +23,9 @@ export function ContactSection() {
   return (
     <section id="kontak">
       <div className="section-header">
-        <div className="comic-tag">BAB VI: HUBUNGI MARKAS</div>
+        <div className="comic-tag">{t('contact.tag')}</div>
         <h2 className="section-title">
-          KIRIM PESAN RAHASIA <span>📬</span>
+          {t('contact.title')} <span>📬</span>
         </h2>
       </div>
 
@@ -35,30 +39,27 @@ export function ContactSection() {
               marginBottom: 12,
             }}
           >
-            &quot;PUNYA MISI ATAU PROYEK MENARIK? JANGAN SEGAN-SEGAN!&quot;
+            {t('contact.quote')}
           </h3>
-          <p style={{ color: '#ccc', marginBottom: 24 }}>
-            Saya selalu terbuka untuk tawaran kolaborasi freelance, proyek skala penuh, atau sekadar berdiskusi
-            seputar teknologi web dan resep taco terenak.
-          </p>
+          <p style={{ color: '#ccc', marginBottom: 24 }}>{t('contact.intro')}</p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="fact-item">
               <span className="fact-icon">✉️</span>
               <div>
-                <strong>Email:</strong> {profileData.email}
+                <strong>{t('contact.emailLabel')}</strong> {profileData.email}
               </div>
             </div>
             <div className="fact-item">
               <span className="fact-icon">📍</span>
               <div>
-                <strong>Markas:</strong> {profileData.location}
+                <strong>{t('contact.baseLabel')}</strong> {loc(profileData.location)}
               </div>
             </div>
             <div className="fact-item">
               <span className="fact-icon">🌐</span>
               <div>
-                <strong>Socials:</strong>{' '}
+                <strong>{t('contact.socialsLabel')}</strong>{' '}
                 <a href={profileData.githubUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--color-yellow)' }}>
                   {profileData.github}
                 </a>
@@ -67,7 +68,7 @@ export function ContactSection() {
             <div className="fact-item">
               <span className="fact-icon">⚡</span>
               <div>
-                <strong>Status:</strong> {profileData.availability}
+                <strong>{t('contact.statusLabel')}</strong> {loc(profileData.availability)}
               </div>
             </div>
           </div>
@@ -77,13 +78,13 @@ export function ContactSection() {
           <form className="contact-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label className="form-label" htmlFor="contact-name">
-                NAMA KODE PENGUNJUNG
+                {t('contact.nameLabel')}
               </label>
               <input
                 id="contact-name"
                 className="comic-input"
                 type="text"
-                placeholder="Masukkan nama atau julukanmu"
+                placeholder={t('contact.namePlaceholder')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -91,13 +92,13 @@ export function ContactSection() {
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="contact-email">
-                ALAMAT TRANSMISI (EMAIL)
+                {t('contact.emailFormLabel')}
               </label>
               <input
                 id="contact-email"
                 className="comic-input"
                 type="email"
-                placeholder="nama@domain.com"
+                placeholder={t('contact.emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -105,25 +106,21 @@ export function ContactSection() {
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="contact-message">
-                PESAN RAHASIA
+                {t('contact.messageLabel')}
               </label>
               <textarea
                 id="contact-message"
                 className="comic-textarea"
-                placeholder="Tuliskan ide proyek atau pesan penting di sini..."
+                placeholder={t('contact.messagePlaceholder')}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
               />
             </div>
             <button type="submit" className="comic-btn" style={{ marginTop: 8 }}>
-              KIRIM TRANSMISI 🚀
+              {t('contact.submit')}
             </button>
-            {sent && (
-              <div className="contact-success">
-                💥 BOOM! Pesan Anda telah meluncur ke markas — aplikasi email Anda terbuka untuk konfirmasi.
-              </div>
-            )}
+            {sent && <div className="contact-success">{t('contact.success')}</div>}
           </form>
         </div>
       </div>

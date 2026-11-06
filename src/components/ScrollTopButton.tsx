@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { playSlashSound } from '../hooks/useSoundFx';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 /** Tombol scroll-to-top bergaya roket. */
 export function ScrollTopButton() {
   const [visible, setVisible] = useState(false);
+  // TAMBAHAN: i18n
+  const { t } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 400);
@@ -15,7 +18,7 @@ export function ScrollTopButton() {
   return (
     <button
       className={`scroll-top-btn${visible ? ' visible' : ''}`}
-      title="Meluncur ke Atas!"
+      title={t('scrollTop.title')}
       onClick={() => {
         playSlashSound();
         window.scrollTo({ top: 0, behavior: 'smooth' });

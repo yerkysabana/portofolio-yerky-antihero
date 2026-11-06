@@ -21,6 +21,9 @@
  */
 
 import { projectsData, projectDetailsData } from '../data/portfolioData';
+// TAMBAHAN: i18n — panel detail dibangun vanilla JS, jadi bahasa dibaca lewat getLang()/loc()
+import { getLang, loc } from '../i18n/LanguageProvider';
+import { getUiText } from '../i18n/translations';
 
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FINE_POINTER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -48,25 +51,26 @@ function isMobileViewport(): boolean {
 function buildPanelHtml(index: number): string {
   const project = projectsData[index];
   const detail = projectDetailsData[index];
+  const lang = getLang(); // TAMBAHAN: i18n — bahasa aktif saat panel dibangun
 
   // judul: huruf per huruf untuk efek glitch masuk
-  const letters = project.title
+  const letters = loc(project.title)
     .split('')
     .map((ch, i) => `<span class="pd-letter" style="--i:${i}">${escapeHtml(ch === ' ' ? '\u00A0' : ch)}</span>`)
     .join('');
 
   // gambar utama (GANTI: isi detail.image di portfolioData untuk memakai gambar asli)
   const heroMedia = detail.image
-    ? `<img src="${escapeHtml(detail.image)}" alt="${escapeHtml(project.title)}" />`
+    ? `<img src="${escapeHtml(detail.image)}" alt="${escapeHtml(loc(project.title))}" />`
     : `<div class="pd-hero-placeholder"><span class="pd-hero-placeholder-text">${escapeHtml(
         project.categoryLabel.toUpperCase(),
       )}</span></div>`;
 
   const blocks = [
-    { title: '📖 LATAR BELAKANG', text: detail.background },
-    { title: '💥 MASALAH', text: detail.problem },
-    { title: '⚔️ SOLUSI', text: detail.solution },
-    { title: '🏆 HASIL', text: detail.result, stamp: true },
+    { title: getUiText('detail.blockBackground', lang), text: loc(detail.background) },
+    { title: getUiText('detail.blockProblem', lang), text: loc(detail.problem) },
+    { title: getUiText('detail.blockSolution', lang), text: loc(detail.solution) },
+    { title: getUiText('detail.blockResult', lang), text: loc(detail.result), stamp: true },
   ]
     .map(
       (block, i) => `
@@ -85,7 +89,7 @@ function buildPanelHtml(index: number): string {
         <div class="pd-stat-value"><span class="pd-count" data-target="${stat.value}">0</span>${escapeHtml(
           stat.suffix ?? '',
         )}</div>
-        <div class="pd-stat-label">${escapeHtml(stat.label)}</div>
+        <div class="pd-stat-label">${escapeHtml(loc(stat.label))}</div>
       </div>`,
     )
     .join('');
@@ -94,20 +98,25 @@ function buildPanelHtml(index: number): string {
     .map((item, i) => {
       // GANTI: isi item.image di portfolioData untuk memakai screenshot asli
       const media = item.image
-        ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.caption)}" />`
-        : `<div class="pd-slide-placeholder"><span>${escapeHtml(item.caption)}</span></div>`;
+        ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(loc(item.caption))}" />`
+        : `<div class="pd-slide-placeholder"><span>${escapeHtml(loc(item.caption))}</span></div>`;
       return `
       <div class="pd-slide" data-slide="${i}">
         <div class="pd-slide-inner">
           ${media}
-          <div class="pd-slide-caption">${escapeHtml(item.caption)}</div>
+          <div class="pd-slide-caption">${escapeHtml(loc(item.caption))}</div>
         </div>
       </div>`;
     })
     .join('');
 
   const dots = detail.gallery
-    .map((_, i) => `<button type="button" class="pd-dot${i === 0 ? ' is-active' : ''}" aria-label="Slide ${i + 1}"></button>`)
+    .map(
+      (_, i) =>
+        `<button type="button" class="pd-dot${i === 0 ? ' is-active' : ''}" aria-label="${escapeHtml(
+          getUiText('detail.slide', lang).replace('{n}', String(i + 1)),
+        )}"></button>`,
+    )
     .join('');
 
   const techStack = detail.techStack
@@ -127,14 +136,16 @@ function buildPanelHtml(index: number): string {
   const actionBtn = (cls: string, label: string, url?: string) =>
     url && url !== '#'
       ? `<a class="pd-btn ${cls}" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${label}</a>`
-      : `<button class="pd-btn ${cls}" type="button" aria-disabled="true" title="GANTI: isi link proyek di portfolioData.ts">${label}</button>`;
+      : `<button class="pd-btn ${cls}" type="button" aria-disabled="true" title="${escapeHtml(
+          getUiText('detail.linkHint', lang),
+        )}">${label}</button>`;
 
   return `
     <div class="pd-backdrop"></div>
     <div class="pd-panel" role="dialog" aria-modal="true" aria-labelledby="pd-title-${index}" tabindex="-1">
       <div class="pd-progress"><div class="pd-progress-fill"></div></div>
       <div class="pd-scroll">
-        <button type="button" class="pd-close">← KEMBALI</button>
+        <button type="button" class="pd-close">${getUiText('detail.back', lang)}</button>
         <header class="pd-hero">
           <div class="pd-hero-media">
             <div class="pd-hero-media-inner">${heroMedia}</div>
@@ -143,7 +154,7 @@ function buildPanelHtml(index: number): string {
           <div class="pd-hero-content">
             <div class="pd-hero-badge">${escapeHtml(project.badge)}</div>
             <h2 class="pd-title" id="pd-title-${index}">${letters}</h2>
-            <div class="pd-hero-sub">${escapeHtml(project.categoryLabel)} • ${escapeHtml(project.summary)}</div>
+            <div class="pd-hero-sub">${escapeHtml(project.categoryLabel)} • ${escapeHtml(loc(project.summary))}</div>
           </div>
         </header>
         <div class="pd-body">
@@ -159,21 +170,21 @@ function buildPanelHtml(index: number): string {
           <footer class="pd-footer">
             <button type="button" class="pd-next">
               <span>
-                <small>PROYEK BERIKUTNYA</small>
-                <span class="pd-next-label">${escapeHtml(nextProject.title)}</span>
+                <small>${getUiText('detail.next', lang)}</small>
+                <span class="pd-next-label">${escapeHtml(loc(nextProject.title))}</span>
               </span>
               <span class="pd-next-arrow">➔</span>
             </button>
             <div class="pd-actions">
-              ${actionBtn('', '🚀 KUNJUNGI PROYEK', detail.links.live)}
-              ${actionBtn('pd-btn--secondary', '💻 LIHAT KODE', detail.links.repo)}
+              ${actionBtn('', getUiText('detail.visit', lang), detail.links.live)}
+              ${actionBtn('pd-btn--secondary', getUiText('detail.code', lang), detail.links.repo)}
             </div>
           </footer>
         </div>
       </div>
     </div>
     <div class="pd-lightbox" aria-hidden="true">
-      <button type="button" class="pd-lightbox-close">✕ TUTUP</button>
+      <button type="button" class="pd-lightbox-close">${getUiText('detail.close', lang)}</button>
       <div class="pd-lightbox-content"></div>
     </div>`;
 }

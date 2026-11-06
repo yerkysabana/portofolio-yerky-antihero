@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { profileData } from '../data/portfolioData';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 function Letters({ text, highlight = false }: { text: string; highlight?: boolean }) {
   return (
@@ -18,6 +19,8 @@ export function HeroSection() {
   const maskRef = useRef<HTMLDivElement>(null);
   const leftPupilRef = useRef<SVGGElement>(null);
   const rightPupilRef = useRef<SVGGElement>(null);
+  // TAMBAHAN: i18n
+  const { t, loc } = useLanguage();
 
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
@@ -51,24 +54,24 @@ export function HeroSection() {
     <section id="hero">
       <div className="hero-grid">
         <div className="hero-content">
-          <div className="narrative-box">★ EDISI SPESIAL #01: MASUK KE SEMESTA SAYA</div>
+          <div className="narrative-box">{t('hero.edition')}</div>
 
           <h1 className="glitch-title">
-            <Letters text={profileData.heroGreeting} />
+            <Letters text={loc(profileData.heroGreeting)} />
             {' '}
             <Letters text={profileData.heroName} highlight />
           </h1>
 
-          <div className="speech-bubble">{profileData.speech}</div>
+          <div className="speech-bubble">{loc(profileData.speech)}</div>
 
-          <p className="hero-desc">{profileData.heroDesc}</p>
+          <p className="hero-desc">{loc(profileData.heroDesc)}</p>
 
           <div className="hero-cta-group">
             <a href="#proyek" className="comic-btn">
-              ⚡ LIHAT KARYA GILA SAYA
+              {t('hero.ctaWork')}
             </a>
             <a href="#arcade" className="comic-btn comic-btn-secondary">
-              🎮 COBA MINI GAME
+              {t('hero.ctaGame')}
             </a>
           </div>
         </div>
@@ -93,7 +96,7 @@ export function HeroSection() {
                 <polygon points="240,132 180,150 220,120" fill="#FFFFFF" stroke="#000" strokeWidth="4" />
               </g>
             </svg>
-            <div className="mask-caption">👀 &quot;SAYA MEMANTAU GERAKAN KURSORMU!&quot;</div>
+            <div className="mask-caption">{t('hero.maskCaption')}</div>
           </div>
         </div>
       </div>

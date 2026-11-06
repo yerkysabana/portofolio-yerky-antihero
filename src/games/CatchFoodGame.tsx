@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { playBoomSound, playScoreSound } from '../hooks/useSoundFx';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 interface FallingObject {
   x: number;
@@ -17,6 +18,8 @@ export function CatchFoodGame({ onScore }: { onScore: (score: number) => void })
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [phase, setPhase] = useState<'start' | 'playing' | 'over'>('start');
+  // TAMBAHAN: i18n
+  const { t } = useLanguage();
 
   const objectsRef = useRef<FallingObject[]>([]);
   const playerXRef = useRef(200);
@@ -168,9 +171,11 @@ export function CatchFoodGame({ onScore }: { onScore: (score: number) => void })
     <div className="game-screen">
       <div className="game-hud">
         <div className="hud-chip">
-          SKOR: <span>{score}</span>
+          {t('game.score')} <span>{score}</span>
         </div>
-        <div className="hud-chip">NYAWA: {'❤️'.repeat(lives)}</div>
+        <div className="hud-chip">
+          {t('game.lives')} {'❤️'.repeat(lives)}
+        </div>
       </div>
       <canvas
         ref={canvasRef}
@@ -185,26 +190,21 @@ export function CatchFoodGame({ onScore }: { onScore: (score: number) => void })
         <div className={phase === 'start' ? 'overlay-start' : 'overlay-gameover'}>
           {phase === 'start' ? (
             <>
-              <h3 className="overlay-title">TANGKAP CHIMICHANGA! 🌯</h3>
-              <p className="overlay-desc">
-                Gerakkan keranjang/karakter di bawah menggunakan geseran mouse, jari, atau tombol Panah Kiri/Kanan.
-                Tangkap semua makanan lezat, hindari dinamit &amp; granat!
-              </p>
+              <h3 className="overlay-title">{t('catch.title')}</h3>
+              <p className="overlay-desc">{t('catch.desc')}</p>
               <button className="comic-btn" onClick={start}>
-                TANGKAP SEKARANG! 🌯
+                {t('catch.start')}
               </button>
             </>
           ) : (
             <>
-              <h3 className="overlay-title">CHIMICHANGA LENYAP!</h3>
-              <p className="overlay-desc">
-                &quot;Dapur kita kehabisan stok... perut pahlawan mulai keroncongan.&quot;
-              </p>
+              <h3 className="overlay-title">{t('catch.over')}</h3>
+              <p className="overlay-desc">{t('catch.overDesc')}</p>
               <p className="overlay-score">
-                SKOR AKHIR: <span>{score}</span>
+                {t('game.finalScore')} <span>{score}</span>
               </p>
               <button className="comic-btn" onClick={start}>
-                COBA LAGI 🔄
+                {t('catch.again')}
               </button>
             </>
           )}

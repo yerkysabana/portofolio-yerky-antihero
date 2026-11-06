@@ -1,5 +1,10 @@
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
+
 /** Loading screen bergaya topeng komik. */
 export function LoadingScreen({ hidden }: { hidden: boolean }) {
+  // TAMBAHAN: i18n
+  const { t } = useLanguage();
+
   return (
     <div id="loading-screen" className={hidden ? 'hidden' : ''}>
       <div className="loader-mask">
@@ -30,8 +35,8 @@ export function LoadingScreen({ hidden }: { hidden: boolean }) {
           </polygon>
         </svg>
       </div>
-      <div className="loader-text">MEMUAT PORTFOLIO...</div>
-      <div className="loader-subtext">&quot;Tenang, santai saja. Saya bukan virus trojan.&quot;</div>
+      <div className="loader-text">{t('loading.text')}</div>
+      <div className="loader-subtext">{t('loading.subtext')}</div>
     </div>
   );
 }

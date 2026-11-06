@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { playBoomSound, playSlashSound } from '../hooks/useSoundFx';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 interface Item {
   x: number;
@@ -19,6 +20,8 @@ export function TacoSlashGame({ onScore }: { onScore: (score: number) => void })
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [phase, setPhase] = useState<'start' | 'playing' | 'over'>('start');
+  // TAMBAHAN: i18n
+  const { t } = useLanguage();
 
   const itemsRef = useRef<Item[]>([]);
   const trailRef = useRef<{ x: number; y: number }[]>([]);
@@ -149,9 +152,11 @@ export function TacoSlashGame({ onScore }: { onScore: (score: number) => void })
     <div className="game-screen">
       <div className="game-hud">
         <div className="hud-chip">
-          SKOR: <span>{score}</span>
+          {t('game.score')} <span>{score}</span>
         </div>
-        <div className="hud-chip">NYAWA: {'❤️'.repeat(lives)}</div>
+        <div className="hud-chip">
+          {t('game.lives')} {'❤️'.repeat(lives)}
+        </div>
       </div>
       <canvas
         ref={canvasRef}
@@ -172,26 +177,21 @@ export function TacoSlashGame({ onScore }: { onScore: (score: number) => void })
         <div className={phase === 'start' ? 'overlay-start' : 'overlay-gameover'}>
           {phase === 'start' ? (
             <>
-              <h3 className="overlay-title">TEBAS TACO! 🌮</h3>
-              <p className="overlay-desc">
-                Geser/swipe mouse atau jari Anda seperti pedang katana untuk membelah Taco &amp; Chimichanga yang
-                terlempar ke atas. HATI-HATI: Jangan tebas bom tengkorak!
-              </p>
+              <h3 className="overlay-title">{t('taco.title')}</h3>
+              <p className="overlay-desc">{t('taco.desc')}</p>
               <button className="comic-btn" onClick={start}>
-                ASAH KATANA! ⚔️
+                {t('taco.start')}
               </button>
             </>
           ) : (
             <>
-              <h3 className="overlay-title">LEDAKAN BOM! 💣</h3>
-              <p className="overlay-desc">
-                &quot;Tebasanmu meleset atau bomnya terlalu lezat untuk dilewatkan?&quot;
-              </p>
+              <h3 className="overlay-title">{t('taco.over')}</h3>
+              <p className="overlay-desc">{t('taco.overDesc')}</p>
               <p className="overlay-score">
-                SKOR AKHIR: <span>{score}</span>
+                {t('game.finalScore')} <span>{score}</span>
               </p>
               <button className="comic-btn" onClick={start}>
-                TEBAS LAGI 🔄
+                {t('taco.again')}
               </button>
             </>
           )}

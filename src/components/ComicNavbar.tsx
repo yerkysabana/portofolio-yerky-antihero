@@ -3,6 +3,7 @@ import { navSections, profileData } from '../data/portfolioData';
 import { useSoundEnabled } from '../hooks/useSoundEnabled';
 import { playScoreSound, setSoundEnabled } from '../hooks/useSoundFx';
 import { getStackFrameHeight } from '../lib/stackingScroll';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 interface ComicNavbarProps {
   cursorOn: boolean;
@@ -10,11 +11,13 @@ interface ComicNavbarProps {
   onLogoClick: () => void;
 }
 
-/** Sticky navbar panel komik + toggle SFX/kursor + menu mobile. */
+/** Sticky navbar panel komik + toggle SFX/kursor/bahasa + menu mobile. */
 export function ComicNavbar({ cursorOn, onToggleCursor, onLogoClick }: ComicNavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState('hero');
   const soundOn = useSoundEnabled();
+  // TAMBAHAN: i18n — teks UI, teks data bilingual, bahasa aktif & fungsi ganti bahasa
+  const { t, loc, lang, toggleLang } = useLanguage();
 
   useEffect(() => {
     let ticking = false;
@@ -57,7 +60,7 @@ export function ComicNavbar({ cursorOn, onToggleCursor, onLogoClick }: ComicNavb
   return (
     <nav className="comic-navbar">
       <div className="nav-inner">
-        <a href="#hero" className="brand-logo" onClick={onLogoClick} title="Klik aku beberapa kali...">
+        <a href="#hero" className="brand-logo" onClick={onLogoClick} title={t('nav.logoTitle')}>
           <div className="logo-badge">
             <svg viewBox="0 0 30 30" width="24" height="24">
               <circle cx="15" cy="15" r="14" fill="#C8102E" />
@@ -79,7 +82,7 @@ export function ComicNavbar({ cursorOn, onToggleCursor, onLogoClick }: ComicNavb
           {navSections.map(({ id, label }) => (
             <li key={id}>
               <a href={`#${id}`} className={activeId === id ? 'active' : ''} onClick={() => setMenuOpen(false)}>
-                {label}
+                {loc(label)}
               </a>
             </li>
           ))}
@@ -89,20 +92,32 @@ export function ComicNavbar({ cursorOn, onToggleCursor, onLogoClick }: ComicNavb
           <button
             className="btn-tool"
             onClick={toggleSound}
-            title="Nyalakan/Matikan Sound FX"
+            title={t('nav.sfxTitle')}
             style={soundOn ? { backgroundColor: 'var(--color-primary)' } : undefined}
           >
-            <span>{soundOn ? '🔊' : '🔇'}</span> SFX
+            <span>{soundOn ? '🔊' : '🔇'}</span>{' '}
+            <span className="tool-text">{t('nav.sfx')}</span>
           </button>
           <button
             className="btn-tool"
             onClick={onToggleCursor}
-            title="Nyalakan/Matikan Kursor Custom"
+            title={t('nav.cursorTitle')}
             style={cursorOn ? { backgroundColor: 'var(--color-primary)' } : undefined}
           >
-            🎯 KURSOR
+            🎯 <span className="tool-text">{t('nav.cursor')}</span>
           </button>
-          <button className="mobile-menu-btn" onClick={() => setMenuOpen((v) => !v)} aria-label="Menu">
+          {/* TAMBAHAN: i18n — tombol ganti bahasa; bahasa aktif disorot kuning */}
+          <button
+            className="btn-tool btn-lang"
+            onClick={toggleLang}
+            title={t('nav.langTitle')}
+            aria-label={t('nav.langTitle')}
+          >
+            <span className={lang === 'id' ? 'lang-on' : ''}>ID</span>
+            <span className="lang-sep">/</span>
+            <span className={lang === 'en' ? 'lang-on' : ''}>EN</span>
+          </button>
+          <button className="mobile-menu-btn" onClick={() => setMenuOpen((v) => !v)} aria-label={t('nav.menu')}>
             ☰
           </button>
         </div>

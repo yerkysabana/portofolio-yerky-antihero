@@ -271,6 +271,24 @@ body::before {
   transform: translateY(-2px);
 }
 
+/* TAMBAHAN: i18n — tombol ganti bahasa (ID/EN); bahasa aktif disorot kuning */
+.btn-lang {
+  font-family: var(--font-comic);
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.btn-lang .lang-on {
+  color: var(--color-yellow);
+}
+
+.btn-lang .lang-sep {
+  color: #777;
+}
+
 .mobile-menu-btn {
   display: none;
   background: var(--color-primary);
@@ -1493,6 +1511,35 @@ body.konami-chaos {
     gap: 12px;
   }
   .fourth-wall-widget {
+    display: none;
+  }
+
+  /* TAMBAHAN: i18n — navbar mobile: perkecil brand & sembunyikan label tombol
+     supaya tombol bahasa (ID/EN) tetap muat di layar sempit (bug: overflow) */
+  .nav-inner {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .brand-logo {
+    min-width: 0;
+    flex-shrink: 1;
+  }
+  .logo-badge {
+    width: 36px;
+    height: 36px;
+  }
+  .brand-text {
+    font-size: 1.4rem;
+  }
+  .nav-tools {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .btn-tool {
+    padding: 6px 8px;
+    flex-shrink: 0;
+  }
+  .tool-text {
     display: none;
   }
 }

@@ -1,13 +1,17 @@
 import { aboutFacts, profileData, statsData } from '../data/portfolioData';
+import { useLanguage } from '../i18n/LanguageProvider'; // TAMBAHAN: i18n
 
 /** Tentang saya: foto, bio, fakta, dan kartu statistik. */
 export function AboutSection() {
+  // TAMBAHAN: i18n
+  const { t, loc } = useLanguage();
+
   return (
     <section id="tentang">
       <div className="section-header">
-        <div className="comic-tag">BAB II: ASAL-USUL RAHASIA</div>
+        <div className="comic-tag">{t('about.tag')}</div>
         <h2 className="section-title">
-          TENTANG SAYA <span>💥</span>
+          {t('about.title')} <span>💥</span>
         </h2>
       </div>
 
@@ -25,16 +29,16 @@ export function AboutSection() {
               marginBottom: 12,
             }}
           >
-            {profileData.aboutQuote}
+            {loc(profileData.aboutQuote)}
           </h3>
-          <p style={{ color: '#ddd', marginBottom: 18 }}>{profileData.bio}</p>
-          <p style={{ color: '#ddd', marginBottom: 18 }}>{profileData.secondaryBio}</p>
+          <p style={{ color: '#ddd', marginBottom: 18 }}>{loc(profileData.bio)}</p>
+          <p style={{ color: '#ddd', marginBottom: 18 }}>{loc(profileData.secondaryBio)}</p>
 
           <div className="about-facts-list">
             {aboutFacts.map((fact) => (
               <div className="fact-item" key={fact.icon}>
                 <span className="fact-icon">{fact.icon}</span>
-                <div>{fact.text}</div>
+                <div>{loc(fact.text)}</div>
               </div>
             ))}
           </div>
@@ -43,11 +47,11 @@ export function AboutSection() {
 
       <div className="comic-stat-grid">
         {statsData.map((stat) => (
-          <div className={`comic-stat-card${stat.highlight ? ' highlight' : ''}`} key={stat.label}>
-            <div className="comic-stat-label">{stat.label}</div>
+          <div className={`comic-stat-card${stat.highlight ? ' highlight' : ''}`} key={stat.label.id}>
+            <div className="comic-stat-label">{loc(stat.label)}</div>
             <div className="comic-stat-value">{stat.value}</div>
-            <div className="comic-stat-sublabel">{stat.sublabel}</div>
-            <div className="comic-stat-desc">{stat.description}</div>
+            <div className="comic-stat-sublabel">{loc(stat.sublabel)}</div>
+            <div className="comic-stat-desc">{loc(stat.description)}</div>
           </div>
         ))}
       </div>
